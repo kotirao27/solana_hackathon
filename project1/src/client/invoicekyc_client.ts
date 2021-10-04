@@ -196,7 +196,7 @@ export async function checkProgram(): Promise<void> {
 }
 
 
- export async function pushInvoiceData(jsonMessage) => {
+ export async function pushInvoiceData(jsonMessage : string): Promise<void> {
   console.log('json message received  ${JSON.parse(jsonMessage)}');
   const paddedMsg = jsonMessage.padEnd(1000);
   const buffer = Buffer.from(paddedMsg, 'utf8');
@@ -205,7 +205,7 @@ export async function checkProgram(): Promise<void> {
     programId
     data: buffer,
   });
-  const confirmation = await sendAndConfirmTransaction(
+  await sendAndConfirmTransaction(
     connection,
     new Transaction().add(instruction),
     [payer],
@@ -214,7 +214,7 @@ export async function checkProgram(): Promise<void> {
       preflightCommitment: 'singleGossip',
     },
   );
-  return confirmation;
+  
 }
 
 

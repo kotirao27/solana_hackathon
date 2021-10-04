@@ -8,7 +8,7 @@ import {
   checkProgram,
   pushInvoiceData,
   pullInvoiceData,
-} from './hello_world';
+} from './invoicekyc_client';
 
 async function main() {
   console.log("Let's say hello to a Solana account...");
