@@ -202,7 +202,7 @@ export async function checkProgram(): Promise<void> {
   const buffer = Buffer.from(paddedMsg, 'utf8');
   const instruction = new TransactionInstruction({
     keys: [{pubkey: greetedPubkey, isSigner: false, isWritable: true}],
-    programId
+    programId,
     data: buffer,
   });
   await sendAndConfirmTransaction(
