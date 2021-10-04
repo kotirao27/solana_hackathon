@@ -48,19 +48,19 @@ const PROGRAM_PATH = path.resolve(__dirname, '../../dist/program');
  *   - `npm run build:program-c`
  *   - `npm run build:program-rust`
  */
-const PROGRAM_SO_PATH = path.join(PROGRAM_PATH, 'helloworld.so');
+const PROGRAM_SO_PATH = path.join(PROGRAM_PATH, 'invoicekyc.so');
 
 /**
  * Path to the keypair of the deployed program.
- * This file is created when running `solana program deploy dist/program/helloworld.so`
+ * This file is created when running `solana program deploy dist/program/invoicekyc.so`
  */
-const PROGRAM_KEYPAIR_PATH = path.join(PROGRAM_PATH, 'helloworld-keypair.json');
+const PROGRAM_KEYPAIR_PATH = path.join(PROGRAM_PATH, 'invoicekyc-keypair.json');
 
 /**
  * The state of a greeting account managed by the hello world program
  */
 class GreetingAccount {
-  counter = 0;
+  counter = 0; 
   constructor(fields: {counter: number} | undefined = undefined) {
     if (fields) {
       this.counter = fields.counter;
@@ -161,7 +161,7 @@ export async function checkProgram(): Promise<void> {
   console.log(`Using program ${programId.toBase58()}`);
 
   // Derive the address (public key) of a greeting account from the program so that it's easy to find later.
-  const GREETING_SEED = 'hello';
+  const GREETING_SEED = 'invoice_check';
   greetedPubkey = await PublicKey.createWithSeed(
     payer.publicKey,
     GREETING_SEED,
@@ -195,40 +195,36 @@ export async function checkProgram(): Promise<void> {
   }
 }
 
-/**
- * Say hello
- */
-export async function sayHello(): Promise<void> {
-  console.log('Saying hello to', greetedPubkey.toBase58());
+
+ export async function pushInvoiceData(jsonMessage) => {
+  console.log('json message received  ${JSON.parse(jsonMessage)}');
+  const paddedMsg = jsonMessage.padEnd(1000);
+  const buffer = Buffer.from(paddedMsg, 'utf8');
   const instruction = new TransactionInstruction({
     keys: [{pubkey: greetedPubkey, isSigner: false, isWritable: true}],
-    programId,
-    data: Buffer.alloc(0), // All instructions are hellos
+    programId
+    data: buffer,
   });
-  await sendAndConfirmTransaction(
+  const confirmation = await sendAndConfirmTransaction(
     connection,
     new Transaction().add(instruction),
     [payer],
+    {
+      commitment: 'singleGossip',
+      preflightCommitment: 'singleGossip',
+    },
   );
+  return confirmation;
 }
+
 
 /**
  * Report the number of times the greeted account has been said hello to
  */
-export async function reportGreetings(): Promise<void> {
+export async function pullInvoiceData(): Promise<void> {
   const accountInfo = await connection.getAccountInfo(greetedPubkey);
   if (accountInfo === null) {
     throw 'Error: cannot find the greeted account';
   }
-  const greeting = borsh.deserialize(
-    GreetingSchema,
-    GreetingAccount,
-    accountInfo.data,
-  );
-  console.log(
-    greetedPubkey.toBase58(),
-    'has been greeted',
-    greeting.counter,
-    'time(s)',
-  );
+  console.log(Buffer.from(accountInfo.data).toString());
 }

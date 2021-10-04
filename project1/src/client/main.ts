@@ -6,8 +6,8 @@ import {
   establishConnection,
   establishPayer,
   checkProgram,
-  sayHello,
-  reportGreetings,
+  pushInvoiceData,
+  pullInvoiceData,
 } from './hello_world';
 
 async function main() {
@@ -22,11 +22,11 @@ async function main() {
   // Check if the program has been deployed
   await checkProgram();
 
-  // Say hello to an account
-  await sayHello();
+  // Save invoice data
+  await pushInvoiceData('{"invoiceNo":"123","supplierName": "XYZ"}');
 
   // Find out how many times that account has been greeted
-  await reportGreetings();
+  await pullInvoiceData();
 
   console.log('Success');
 }
