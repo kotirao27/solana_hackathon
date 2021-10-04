@@ -14,8 +14,6 @@ import {
 import fs from 'mz/fs';
 import path from 'path';
 import * as borsh from 'borsh';
-const BufferLayout = require('buffer-layout');
-
 
 import {getPayer, getRpcUrl, createKeypairFromFile} from './utils';
 
@@ -50,28 +48,40 @@ const PROGRAM_PATH = path.resolve(__dirname, '../../dist/program');
  *   - `npm run build:program-c`
  *   - `npm run build:program-rust`
  */
-const PROGRAM_SO_PATH = path.join(PROGRAM_PATH, 'invoicekyc.so');
+const PROGRAM_SO_PATH = path.join(PROGRAM_PATH, 'helloworld.so');
 
 /**
  * Path to the keypair of the deployed program.
- * This file is created when running `solana program deploy dist/program/invoicekyc.so`
+ * This file is created when running `solana program deploy dist/program/helloworld.so`
  */
-const PROGRAM_KEYPAIR_PATH = path.join(PROGRAM_PATH, 'invoicekyc-keypair.json');
+const PROGRAM_KEYPAIR_PATH = path.join(PROGRAM_PATH, 'helloworld-keypair.json');
 
 /**
  * The state of a greeting account managed by the hello world program
  */
 class GreetingAccount {
-  counter = ""; 
-  constructor(fields: {counter: string} | undefined = undefined) {
+  counter = 0;
+  constructor(fields: {counter: number} | undefined = undefined) {
     if (fields) {
       this.counter = fields.counter;
     }
   }
 }
 
-const structure = BufferLayout.struct([BufferLayout.blob(1000,'txt')]);
+/**
+ * Borsh schema definition for greeting accounts
+ */
+const GreetingSchema = new Map([
+  [GreetingAccount, {kind: 'struct', fields: [['counter', 'u32']]}],
+]);
 
+/**
+ * The expected size of each greeting account.
+ */
+const GREETING_SIZE = borsh.serialize(
+  GreetingSchema,
+  new GreetingAccount(),
+).length;
 
 /**
  * Establish a connection to the cluster
@@ -92,7 +102,7 @@ export async function establishPayer(): Promise<void> {
     const {feeCalculator} = await connection.getRecentBlockhash();
 
     // Calculate the cost to fund the greeter account
-    fees += await connection.getMinimumBalanceForRentExemption(structure.span);
+    fees += await connection.getMinimumBalanceForRentExemption(GREETING_SIZE);
 
     // Calculate the cost of sending transactions
     fees += feeCalculator.lamportsPerSignature * 100; // wag
@@ -151,7 +161,7 @@ export async function checkProgram(): Promise<void> {
   console.log(`Using program ${programId.toBase58()}`);
 
   // Derive the address (public key) of a greeting account from the program so that it's easy to find later.
-  const GREETING_SEED = 'invoice_check';
+  const GREETING_SEED = 'hello';
   greetedPubkey = await PublicKey.createWithSeed(
     payer.publicKey,
     GREETING_SEED,
@@ -166,11 +176,10 @@ export async function checkProgram(): Promise<void> {
       greetedPubkey.toBase58(),
       'to say hello to',
     );
-    const lamports = 1000000000;
-    const space = structure.span;
-    console.log(
-      "space .. "+space
+    const lamports = await connection.getMinimumBalanceForRentExemption(
+      GREETING_SIZE,
     );
+
     const transaction = new Transaction().add(
       SystemProgram.createAccountWithSeed({
         fromPubkey: payer.publicKey,
@@ -178,7 +187,7 @@ export async function checkProgram(): Promise<void> {
         seed: GREETING_SEED,
         newAccountPubkey: greetedPubkey,
         lamports,
-        space,
+        space: GREETING_SIZE,
         programId,
       }),
     );
@@ -186,8 +195,24 @@ export async function checkProgram(): Promise<void> {
   }
 }
 
+/**
+ * Say hello
+ */
+export async function sayHello(): Promise<void> {
+  console.log('Saying hello to', greetedPubkey.toBase58());
+  const instruction = new TransactionInstruction({
+    keys: [{pubkey: greetedPubkey, isSigner: false, isWritable: true}],
+    programId,
+    data: Buffer.alloc(0), // All instructions are hellos
+  });
+  await sendAndConfirmTransaction(
+    connection,
+    new Transaction().add(instruction),
+    [payer],
+  );
+}
 
- export async function pushInvoiceData(jsonMessage : string): Promise<void> {
+export async function pushInvoiceData(jsonMessage : string): Promise<void> {
   console.log("json message received "+jsonMessage);
   const paddedMsg = jsonMessage.padEnd(1000);
   const buffer = Buffer.from(paddedMsg, 'utf8');
@@ -218,4 +243,26 @@ export async function pullInvoiceData(): Promise<void> {
     throw 'Error: cannot find the greeted account';
   }
   console.log(Buffer.from(accountInfo.data).toString());
+}
+
+
+/**
+ * Report the number of times the greeted account has been said hello to
+ */
+export async function reportGreetings(): Promise<void> {
+  const accountInfo = await connection.getAccountInfo(greetedPubkey);
+  if (accountInfo === null) {
+    throw 'Error: cannot find the greeted account';
+  }
+  const greeting = borsh.deserialize(
+    GreetingSchema,
+    GreetingAccount,
+    accountInfo.data,
+  );
+  console.log(
+    greetedPubkey.toBase58(),
+    'has been greeted',
+    greeting.counter,
+    'time(s)',
+  );
 }

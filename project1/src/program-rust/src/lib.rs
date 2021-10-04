@@ -25,7 +25,7 @@ pub struct Message {
 	pub txt: String,
 }
 
-impl Serdes for Message {}
+//impl Serdes for Message {}
 
 entrypoint!(entry);
 
@@ -35,24 +35,33 @@ fn entry(
 	instruction_data: &[u8],
 ) -> ProgramResult {
     msg!("Received invoice request");
+    // Iterating accounts is safer then indexing
+    let accounts_iter = &mut accounts.iter();
+
+    // Get the account to say hello to
+    let account = next_account_info(accounts_iter)?;
+
+    // The account must be owned by the program in order to modify its data
+    if account.owner != program_id {
+        msg!("Greeted account does not have the correct program id");
+        return Err(ProgramError::IncorrectProgramId);
+    }
+
+    let mut unpacked = Message::try_from_slice(&account.data.borrow())?;
     
-	let accounts_iter = &mut accounts.iter();
-	let account = next_account_info(accounts_iter)?;
+    let mut memo = String::from_utf8(instruction_data.to_vec()).map_err(|err| {
+        msg!("Invalid UTF-8, from byte {}");
+        ProgramError::InvalidInstructionData
+     })?;
 
-	let mut data = account.try_borrow_mut_data()?;
-	let mut unpacked = Message::unpack(&data).expect("Failed to read data");
+   let mut iter = memo.chars();
+   let mut slice = iter.as_str();
+   let mut txtFinal = String::from(slice);
+   msg!("Received invoice request {}",txtFinal);
+   unpacked.txt = txtFinal;
 
-	let mut memo = String::from_utf8(instruction_data.to_vec()).map_err(|err| {
-			msg!("Invalid UTF-8, from byte {}");
-			ProgramError::InvalidInstructionData
-	})?;
+   unpacked.serialize(&mut &mut account.data.borrow_mut()[..])?;
 
-	let mut iter = memo.chars();
-	let mut slice = iter.as_str();
-	let mut txtFinal = String::from(slice);
-    msg!("Received invoice request {}",txtFinal);
-	unpacked.txt = txtFinal;
+    Ok(())
 
-	unpacked.pack(&mut data);
-	Ok(())
 }
