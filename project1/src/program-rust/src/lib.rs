@@ -12,6 +12,7 @@ use std::mem;
 pub trait Serdes: Sized + BorshSerialize + BorshDeserialize {
 	fn pack(&self, dst: &mut [u8]) {
 		let encoded = self.try_to_vec().unwrap();
+        msg!("encoded {:?}",encoded);
 		dst[..encoded.len()].copy_from_slice(&encoded);
 	}
 	fn unpack(src: &[u8]) -> Result<Self, ProgramError> {
@@ -33,21 +34,24 @@ fn entry(
 	accounts: &[AccountInfo],
 	instruction_data: &[u8],
 ) -> ProgramResult {
+    msg!("Received invoice request");
+    
 	let accounts_iter = &mut accounts.iter();
 	let account = next_account_info(accounts_iter)?;
 
 	let mut data = account.try_borrow_mut_data()?;
+    msg!("Data {}",data);
 	let mut unpacked = Message::unpack(&data).expect("Failed to read data");
 
 	let mut memo = String::from_utf8(instruction_data.to_vec()).map_err(|err| {
 			msg!("Invalid UTF-8, from byte {}");
 			ProgramError::InvalidInstructionData
 	})?;
-	
+
 	let mut iter = memo.chars();
 	let mut slice = iter.as_str();
 	let mut txtFinal = String::from(slice);
-	txtFinal.truncate(996);
+    msg!("Received invoice request {}",txtFinal);
 	unpacked.txt = txtFinal;
 
 	unpacked.pack(&mut data);

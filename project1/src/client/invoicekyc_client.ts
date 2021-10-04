@@ -60,8 +60,8 @@ const PROGRAM_KEYPAIR_PATH = path.join(PROGRAM_PATH, 'invoicekyc-keypair.json');
  * The state of a greeting account managed by the hello world program
  */
 class GreetingAccount {
-  counter = 0; 
-  constructor(fields: {counter: number} | undefined = undefined) {
+  counter = ""; 
+  constructor(fields: {counter: string} | undefined = undefined) {
     if (fields) {
       this.counter = fields.counter;
     }
@@ -72,16 +72,13 @@ class GreetingAccount {
  * Borsh schema definition for greeting accounts
  */
 const GreetingSchema = new Map([
-  [GreetingAccount, {kind: 'struct', fields: [['counter', 'u32']]}],
+  [GreetingAccount, {kind: 'struct', fields: [['invoiceNo', 'string']]}],
 ]);
 
 /**
  * The expected size of each greeting account.
  */
-const GREETING_SIZE = borsh.serialize(
-  GreetingSchema,
-  new GreetingAccount(),
-).length;
+const GREETING_SIZE = 10000;
 
 /**
  * Establish a connection to the cluster
@@ -197,7 +194,7 @@ export async function checkProgram(): Promise<void> {
 
 
  export async function pushInvoiceData(jsonMessage : string): Promise<void> {
-  console.log('json message received  ${JSON.parse(jsonMessage)}');
+  console.log("json message received "+jsonMessage);
   const paddedMsg = jsonMessage.padEnd(1000);
   const buffer = Buffer.from(paddedMsg, 'utf8');
   const instruction = new TransactionInstruction({
