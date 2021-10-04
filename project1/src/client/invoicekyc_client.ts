@@ -14,6 +14,8 @@ import {
 import fs from 'mz/fs';
 import path from 'path';
 import * as borsh from 'borsh';
+import BufferLayout from 'buffer-layout';
+
 
 import {getPayer, getRpcUrl, createKeypairFromFile} from './utils';
 
@@ -68,17 +70,8 @@ class GreetingAccount {
   }
 }
 
-/**
- * Borsh schema definition for greeting accounts
- */
-const GreetingSchema = new Map([
-  [GreetingAccount, {kind: 'struct', fields: [['invoiceNo', 'string']]}],
-]);
+const structure = BufferLayout.struct([BufferLayout.blob(1000,'txt')]);
 
-/**
- * The expected size of each greeting account.
- */
-const GREETING_SIZE = 10000;
 
 /**
  * Establish a connection to the cluster
@@ -99,7 +92,7 @@ export async function establishPayer(): Promise<void> {
     const {feeCalculator} = await connection.getRecentBlockhash();
 
     // Calculate the cost to fund the greeter account
-    fees += await connection.getMinimumBalanceForRentExemption(GREETING_SIZE);
+    fees += await connection.getMinimumBalanceForRentExemption(structure.span);
 
     // Calculate the cost of sending transactions
     fees += feeCalculator.lamportsPerSignature * 100; // wag
@@ -174,17 +167,17 @@ export async function checkProgram(): Promise<void> {
       'to say hello to',
     );
     const lamports = await connection.getMinimumBalanceForRentExemption(
-      GREETING_SIZE,
+      structure.span
     );
 
     const transaction = new Transaction().add(
-      SystemProgram.createAccountWithSeed({
+      SystemProgram.createAccount({
         fromPubkey: payer.publicKey,
         basePubkey: payer.publicKey,
         seed: GREETING_SEED,
         newAccountPubkey: greetedPubkey,
         lamports,
-        space: GREETING_SIZE,
+        space: structure.span,
         programId,
       }),
     );
