@@ -14,7 +14,7 @@ import {
 import fs from 'mz/fs';
 import path from 'path';
 import * as borsh from 'borsh';
-import BufferLayout from 'buffer-layout';
+const BufferLayout = require('buffer-layout');
 
 
 import {getPayer, getRpcUrl, createKeypairFromFile} from './utils';
@@ -166,18 +166,19 @@ export async function checkProgram(): Promise<void> {
       greetedPubkey.toBase58(),
       'to say hello to',
     );
-    const lamports = await connection.getMinimumBalanceForRentExemption(
-      structure.span
+    const lamports = 1000000000;
+    const space = structure.span;
+    console.log(
+      "space .. "+space
     );
-
     const transaction = new Transaction().add(
-      SystemProgram.createAccount({
+      SystemProgram.createAccountWithSeed({
         fromPubkey: payer.publicKey,
         basePubkey: payer.publicKey,
         seed: GREETING_SEED,
         newAccountPubkey: greetedPubkey,
         lamports,
-        space: structure.span,
+        space,
         programId,
       }),
     );
