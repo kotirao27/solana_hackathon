@@ -9,22 +9,12 @@ use solana_program::{
 };
 use borsh::{BorshDeserialize, BorshSerialize};
 use std::mem;
+use serde::{Deserialize, Serialize};
 
 
-pub trait Serdes: Sized + BorshSerialize + BorshDeserialize {
-	fn pack(&self, dst: &mut [u8]) {
-		let encoded = self.try_to_vec().unwrap();
-        msg!("encoded length ",encoded.len());
-		dst[..encoded.len()].copy_from_slice(&encoded);
-	}
-	fn unpack(src: &[u8]) -> Result<Self, ProgramError> {
-		Self::try_from_slice(src).map_err(|_| ProgramError::InvalidAccountData)
-	}
-}
-
-#[derive(BorshSerialize, BorshDeserialize, PartialEq, Debug)]
-pub struct Message {
-	pub invoiceNo: String,
+#[derive(Debug, Deserialize, Serialize)] struct InoiceData {
+	invoiceNo: String,
+	supplierName: String,
 }
 
 //impl Serdes for Message {}
@@ -52,9 +42,13 @@ fn entry(
 	let mut slice = iter.as_str();
 	let mut txtFinal = String::from(slice);
 	txtFinal.truncate(996);
-    msg!("Received  request is {}",txtFinal);
-    let mut unpacked = Message::unpack(&data).expect("Failed to read data");
-	unpacked.invoiceNo = txtFinal;
-	unpacked.pack(&mut data);
+	let finalText = r#+"\""+txtFinal+"\"#";
+    msg!("Received  request is {}",finalText);
+
+    let invObject:  InoiceDataObject = serde_json::from_str(finalText).unwrap();
+	//unpacked.invoiceNo = txtFinal;
+	//unpacked.pack(&mut data);
+	println!("value inside the json objetc is :: {:?}", invObject);
+
 	Ok(())
 }
