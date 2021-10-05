@@ -23,7 +23,7 @@ async function main() {
   await checkProgram();
 
   // Save invoice data
-  await pushInvoiceData('{"invoiceNo":"123","supplierName": "XYZ"}');
+  await pushInvoiceData('test-inv-123');
 
   // Find out how many times that account has been greeted
   await pullInvoiceData();

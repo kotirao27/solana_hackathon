@@ -56,29 +56,30 @@ const PROGRAM_SO_PATH = path.join(PROGRAM_PATH, 'kycdocument.so');
  */
 const PROGRAM_KEYPAIR_PATH = path.join(PROGRAM_PATH, 'kycdocument-keypair.json');
 
-/**
- * The state of a greeting account managed by the hello world program
- */
 class GreetingAccount {
-  counter = 0;
-  constructor(fields: {counter: number} | undefined = undefined) {
-    if (fields) {
-      this.counter = fields.counter;
-    }
-  }
+  invoiceNo = "";
+ constructor(fields: {invoiceNo: string} | undefined = undefined) {
+   if (fields) {
+     this.invoiceNo = fields.invoiceNo;
+   }
+ }
 }
 
 /**
- * Borsh schema definition for greeting accounts
- */
+* Borsh schema definition for greeting accounts
+*/
 const GreetingSchema = new Map([
-  [GreetingAccount, {kind: 'struct', fields: [['counter', 'u32']]}],
+ [GreetingAccount, {kind: 'struct', fields: [['invoiceNo', 'str']]}],
 ]);
 
 /**
- * The expected size of each greeting account.
- */
-const GREETING_SIZE = 1000;
+* The expected size of each greeting account.
+*/
+const GREETING_SIZE = borsh.serialize(
+         GreetingSchema,
+           new GreetingAccount(),
+           ).length
+
 
 /**
  * Establish a connection to the cluster
