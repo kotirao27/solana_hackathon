@@ -59,8 +59,9 @@ fn entry(
    let mut txtFinal = String::from(slice);
    msg!("Received invoice request {}",txtFinal);
    unpacked.txt = txtFinal;
+   let mut data = account.try_borrow_mut_data()?;
 
-   unpacked.serialize(&mut &mut account.data.borrow_mut()[..])?;
+   unpacked.pack(&mut data);
 
     Ok(())
 
