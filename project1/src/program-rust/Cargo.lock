@@ -2234,7 +2234,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "solana-bpf-invoicekyc"
+name = "solana-bpf-kycdocument"
 version = "0.0.1"
 dependencies = [
  "borsh",

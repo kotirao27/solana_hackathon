@@ -2,6 +2,7 @@ use solana_program::{
 	account_info::{next_account_info, AccountInfo},
 	entrypoint,
 	entrypoint::ProgramResult,
+	log::{sol_log_compute_units, sol_log_params, sol_log_slice},
 	msg,
 	program_error::ProgramError,
 	pubkey::Pubkey,
@@ -12,7 +13,7 @@ use std::mem;
 pub trait Serdes: Sized + BorshSerialize + BorshDeserialize {
 	fn pack(&self, dst: &mut [u8]) {
 		let encoded = self.try_to_vec().unwrap();
-        msg!("encoded {:?} ",encoded);
+        msg!("encoded length ",encoded.len());
 		dst[..encoded.len()].copy_from_slice(&encoded);
 	}
 	fn unpack(src: &[u8]) -> Result<Self, ProgramError> {

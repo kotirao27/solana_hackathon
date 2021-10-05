@@ -1,6 +1,6 @@
 
 [package]
-name = "solana-bpf-invoicekyc"
+name = "solana-bpf-kycdocument"
 version = "0.0.1"
 description = "Example template program written in Rust"
 authors = ["Solana Maintainers <maintainers@solana.com>"]
@@ -22,5 +22,5 @@ solana-program-test = "=1.7.9"
 solana-sdk = "=1.7.9"
 
 [lib]
-name = "invoicekyc"
+name = "kycdocument"
 crate-type = ["cdylib", "lib"]

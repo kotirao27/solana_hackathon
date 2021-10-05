@@ -48,13 +48,13 @@ const PROGRAM_PATH = path.resolve(__dirname, '../../dist/program');
  *   - `npm run build:program-c`
  *   - `npm run build:program-rust`
  */
-const PROGRAM_SO_PATH = path.join(PROGRAM_PATH, 'helloworld.so');
+const PROGRAM_SO_PATH = path.join(PROGRAM_PATH, 'kycdocument.so');
 
 /**
  * Path to the keypair of the deployed program.
  * This file is created when running `solana program deploy dist/program/helloworld.so`
  */
-const PROGRAM_KEYPAIR_PATH = path.join(PROGRAM_PATH, 'helloworld-keypair.json');
+const PROGRAM_KEYPAIR_PATH = path.join(PROGRAM_PATH, 'kycdocument-keypair.json');
 
 /**
  * The state of a greeting account managed by the hello world program
@@ -78,10 +78,7 @@ const GreetingSchema = new Map([
 /**
  * The expected size of each greeting account.
  */
-const GREETING_SIZE = borsh.serialize(
-  GreetingSchema,
-  new GreetingAccount(),
-).length;
+const GREETING_SIZE = 1000;
 
 /**
  * Establish a connection to the cluster
