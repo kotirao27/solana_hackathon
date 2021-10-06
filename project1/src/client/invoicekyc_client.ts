@@ -57,8 +57,8 @@ const PROGRAM_SO_PATH = path.join(PROGRAM_PATH, 'kycdocument.so');
 const PROGRAM_KEYPAIR_PATH = path.join(PROGRAM_PATH, 'kycdocument-keypair.json');
 
 class GreetingAccount {
-  invoiceNo = "";
- constructor(fields: {invoiceNo: string} | undefined = undefined) {
+  invoiceNo = 0;
+ constructor(fields: {invoiceNo: number} | undefined = undefined) {
    if (fields) {
      this.invoiceNo = fields.invoiceNo;
    }
@@ -69,7 +69,7 @@ class GreetingAccount {
 * Borsh schema definition for greeting accounts
 */
 const GreetingSchema = new Map([
- [GreetingAccount, {kind: 'struct', fields: [['invoiceNo', 'str']]}],
+ [GreetingAccount, {kind: 'struct', fields: [['invoiceNo', 'u32']]}],
 ]);
 
 /**
