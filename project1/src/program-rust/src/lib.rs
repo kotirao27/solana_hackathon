@@ -7,30 +7,25 @@ use solana_program::{
     program_error::ProgramError,
     pubkey::Pubkey,
 };
-use std::mem;
-use borsh::{BorshDeserialize,BorshSerialize}
-use serde::{Deserialize, Serialize};
 
+use std::mem;
+use serde::{Deserialize, Serialize};
+use borsh::{BorshDeserialize,BorshSerialize};
 
 #[derive(Debug, Deserialize, Serialize, BorshDeserialize, BorshSerialize)] struct InvoiceData {
-    invoiceno: String,
-    suppliername: String,
+        invoiceno: String,
+            suppliername: String,
 }
 
 #[derive(BorshDeserialize, BorshSerialize, Debug)] struct InvoiceDataList {
-    data: Vec<InvoiceData>
+        data: Vec<InvoiceData>
 }
 
-
-entrypoint!(entry);
-
-fn entry(
-    program_id: &Pubkey,
-    accounts: &[AccountInfo],
-    instruction_data: &[u8],
-) -> ProgramResult {
-    msg!("Received invoice request");
-
+pub trait Serdes: Sized + BorshSerialize + BorshDeserialize {
+            fn unpack(src: &[u8]) -> Result<Self, ProgramError> {
+                        Self::try_from_slice(src).map_err(|_| ProgramError::InvalidAccountData)
+             }
+}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               impl Serdes for InvoiceDataList {}                                                                                                                                                                                                                                                                                                              entrypoint!(entry);                                                                                                                                                                                                                                                                                                                             fn entry(                                                                                                                                                                   program_id: &Pubkey,                                                                                                                                                    accounts: &[AccountInfo],                                                                                                                                               instruction_data: &[u8],                                                                                                                                            ) -> ProgramResult {                                                                                                                                                        msg!("Received invoice request");                                                                                                                                   
     let accounts_iter = &mut accounts.iter();
     let account = next_account_info(accounts_iter)?;
 
@@ -44,18 +39,18 @@ fn entry(
     let mut iter = memo.chars();
     let mut slice = iter.as_str();
     let mut txtFinal = String::from(slice);
-	
-    msg!("Received  request is {}",&txtFinal);
 
-    let invObject:  InvoiceData = serde_json::from_str(&txtFinal).unwrap();
-    let mut existingData = InvoiceDataList::try_from_slice(&data.borrow())?;
-    
-    msg!("Received  account data {}",&existingData);
+    msg!("Received  request is {}",txtFinal);
 
+    msg!("Received  request is... {}",&txtFinal);
+
+    let invObject: InvoiceData = serde_json::from_str(&txtFinal).unwrap();
+    let mut existingData = InvoiceDataList::unpack(&data).expect("Failed to read data");
+    msg!("Received  account data");
+    existingData.data.push(invObject);
     //unpacked.invoiceNo = txtFinal;
     //unpacked.pack(&mut data);
-    msg!("value inside the json objetc is :: {:?}", invObject);
+    msg!("Existting data is :: {:?}", &existingData);
 
     Ok(())
 }
-  
