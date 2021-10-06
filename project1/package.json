@@ -27,10 +27,7 @@
     "buffer-layout": "^1.2.0",
     "borsh": "^0.6.0",
     "mz": "^2.7.0",
-    "yaml": "^1.10.2",
-    "serde" :"^1.0",
-    "serde_json" :"^1.0",
-    "serde_derive" :"^1.0"
+    "yaml": "^1.10.2"
   },
   "devDependencies": {
     "@tsconfig/recommended": "^1.0.1",
