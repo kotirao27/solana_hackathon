@@ -25,9 +25,20 @@ pub trait Serdes: Sized + BorshSerialize + BorshDeserialize {
             fn unpack(src: &[u8]) -> Result<Self, ProgramError> {
                         Self::try_from_slice(src).map_err(|_| ProgramError::InvalidAccountData)
              }
-}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               impl Serdes for InvoiceDataList {}                                                                                                                                                                                                                                                                                                              entrypoint!(entry);                                                                                                                                                                                                                                                                                                                             fn entry(                                                                                                                                                                   program_id: &Pubkey,                                                                                                                                                    accounts: &[AccountInfo],                                                                                                                                               instruction_data: &[u8],                                                                                                                                            ) -> ProgramResult {                                                                                                                                                        msg!("Received invoice request");                                                                                                                                   
+}
+ 
+impl Serdes for InvoiceDataList {}
+
+entrypoint!(entry);
+
+fn entry(
+	program_id: &Pubkey,
+	accounts: &[AccountInfo],
+	instruction_data: &[u8],
+) -> ProgramResult {
+
     let accounts_iter = &mut accounts.iter();
-    let account = next_account_info(accounts_iter)?;
+  let account = next_account_info(accounts_iter)?;
 
     let data = account.try_borrow_mut_data()?;
 
@@ -53,4 +64,5 @@ pub trait Serdes: Sized + BorshSerialize + BorshDeserialize {
     msg!("Existting data is :: {:?}", &existingData);
 
     Ok(())
+
 }
