@@ -6,8 +6,8 @@ import {
   establishConnection,
   establishPayer,
   checkProgram,
-  pushInvoiceData,
-  pullInvoiceData,
+  sendRequestData,
+  reportGreetings,
 } from './invoicekyc_client';
 
 async function main() {
@@ -22,11 +22,12 @@ async function main() {
   // Check if the program has been deployed
   await checkProgram();
 
-  // Save invoice data
-  await pushInvoiceData('{"invoiceno":"test123","suppliername":"testname"}');
+  //await sayHello();
+  // Say hello to an account
+  await sendRequestData('{"invoiceno":"test","suppliername":"test"}');
 
   // Find out how many times that account has been greeted
-  //await pullInvoiceData();
+  //await reportGreetings();
 
   console.log('Success');
 }
