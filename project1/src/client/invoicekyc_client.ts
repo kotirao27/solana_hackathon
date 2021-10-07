@@ -60,17 +60,15 @@ PROGRAM_KEYPAIR_PATH = path.join(PROGRAM_PATH, 'dockyc-keypair.json');
 /**
  * The state of a greeting account managed by the hello world program
  */
-class InvoiceData {
-  invoiceno = "";
-  suppliername = "";
-  constructor(fields=undefined) {
-     this.invoiceno = "";
-     this.suppliername = "";
-     if(fields){
+ class InvoiceData {
+  invoiceno = "123e4567-e89b-12d3-a456-556642440000";
+  suppliername = "123e4567-e89b-12d3-a456-556642440000";
+  constructor(fields: {invoiceno: string,suppliername:string} | undefined = undefined) {
+                                                                                                                                                                             if(fields){
       this.invoiceno = fields.invoiceno;
       this.suppliername = fields.suppliername;
      }
-  }	  
+  }
 }
 
 /**
@@ -96,7 +94,7 @@ const GREETING_SIZE = borsh.serialize(
 /**
  * Establish a connection to the cluster
  */
-export async function establishConnection(): Promise<void> {
+export   async function establishConnection(): Promise<void> {
   const rpcUrl = await getRpcUrl();
   connection = new Connection(rpcUrl, 'confirmed');
   const version = await connection.getVersion();
@@ -180,6 +178,7 @@ const programInfo = await connection.getAccountInfo(programId);
 
   // Check if the greeting account has already been created
   const greetedAccount = await connection.getAccountInfo(greetedPubkey);
+  console.log('Account info {}',greetedAccount);
   if (greetedAccount === null) {
     console.log(
       'Creating account',
@@ -232,8 +231,6 @@ export async function sendRequestData(jsonMessage : string): Promise<void> {
     programId,
     data: buffer,
   });
-  console.log('connection {}',connection);
-  console.log('program id {}',programId);
   await sendAndConfirmTransaction(
     connection,
     new Transaction().add(instruction),
