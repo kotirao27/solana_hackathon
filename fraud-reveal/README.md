@@ -1,4 +1,4 @@
-[![Build status][travis-image]][travis-url] [![Gitpod
+[![Gitpod
 Ready-to-Code](https://img.shields.io/badge/Gitpod-Ready--to--Code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/kotirao27/solana_hackathon/fraud-reveal)
 
 # Invoice Fraud Reveal on Solana
