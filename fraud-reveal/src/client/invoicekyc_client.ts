@@ -52,7 +52,7 @@ const PROGRAM_SO_PATH = path.join(PROGRAM_PATH, 'kycdocument.so');
 
 /**
  * Path to the keypair of the deployed program.
- * This file is created when running `solana program deploy dist/program/helloworld.so`
+ * This file is created when running `solana program deploy dist/program/kycdocument.so`
  */
 const 
 PROGRAM_KEYPAIR_PATH = path.join(PROGRAM_PATH, 'kycdocument-keypair.json');
@@ -80,9 +80,6 @@ class InvoiceData {
   }
 }
 
-/**
- * The state of a greeting account managed by the hello world program
- */
  class InvoiceDataList {
    
     data: InvoiceData[] = [];
@@ -156,7 +153,7 @@ export async function establishPayer(): Promise<void> {
 }
 
 /**
- * Check if the hello world BPF program has been deployed
+ * Check if the kycdocument BPF program has been deployed
  */
 export async function checkProgram(): Promise<void> {
   // Read program id from keypair file
@@ -221,9 +218,27 @@ const programInfo = await connection.getAccountInfo(programId);
 }
 
 /**
- * Save invoice data
+ * Createinvoice data
+ */
+export async function sendRequestData(jsonMessage : string): Promise<void> {
+ await publishMessage(jsonMessage);
+}
+
+/**
+ * Query invoice data
  */
 export async function queryData(jsonMessage : string): Promise<void> {
+ await publishMessage(jsonMessage);
+}
+
+/**
+ * Update invoice data
+ */
+export async function updateData(jsonMessage:string): Promise<void> {
+ await publishMessage(jsonMessage);
+}
+
+export async function publishMessage(jsonMessage:string): Promise<void>{
   console.log('Sending request data'+jsonMessage);
   const paddedMsg = jsonMessage.padEnd(1000);
   const buffer = Buffer.from(paddedMsg, 'utf8');
@@ -241,28 +256,5 @@ export async function queryData(jsonMessage : string): Promise<void> {
 	      preflightCommitment: 'singleGossip',
     },
   );
-}
 
-/**
- * Query invoice data
- */
-export async function updateData(jsonMessage:string): Promise<void> {
-  console.log('Sending update request data'+jsonMessage);
-  const paddedMsg = jsonMessage.padEnd(1000);
-  const buffer = Buffer.from(paddedMsg, 'utf8');
-
-  const instruction = new TransactionInstruction({
-    keys: [{pubkey: greetedPubkey, isSigner: false, isWritable: true}],
-    programId,
-    data: buffer,
-  });
- const result =  await sendAndConfirmTransaction(
-    connection,
-    new Transaction().add(instruction),
-    [payer],
-    {   commitment: 'singleGossip',
-	      preflightCommitment: 'singleGossip',
-    },
-  );
-  console.log('result data {}',result);
 }
