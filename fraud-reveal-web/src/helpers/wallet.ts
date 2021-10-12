@@ -1,25 +1,30 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-
+// @ts-ignore
+import Wallet from "@project-serum/sol-wallet-adapter";
 import {
   Keypair,
   Connection,
   PublicKey,
-  LAMPORTS_PER_SOL,
   SystemProgram,
   TransactionInstruction,
+  LAMPORTS_PER_SOL,
   Transaction,
   sendAndConfirmTransaction,
 } from '@solana/web3.js';
-import fs from 'mz/fs';
 import path from 'path';
+import EventEmitter from "eventemitter3";
 import * as borsh from 'borsh';
+import {createKeypairFromFile} from './utils';
 
-import {getPayer, getRpcUrl, createKeypairFromFile} from './utils';
 
-/**
- * Connection to the network
- */
+export interface WalletAdapter extends EventEmitter {
+  publicKey: PublicKey | null;
+  signTransaction: (transaction: Transaction) => Promise<Transaction>;
+  connect: () => any;
+  disconnect: () => any;
+}
+
+let programId = new PublicKey("H4ntmW2rW7RhLrmbNavdFd45nvVfvEV9VQt4ziRxj3kt");
+
 let connection: Connection;
 
 /**
@@ -28,34 +33,9 @@ let connection: Connection;
 let payer: Keypair;
 
 /**
- * Hello world's program id
- */
-let programId: PublicKey;
-
-/**
  * The public key of the account we are saying hello to
  */
 let greetedPubkey: PublicKey;
-
-/**
- * Path to program files
- */
-const PROGRAM_PATH = path.resolve(__dirname, '../../dist/program');
-
-/**
- * Path to program shared object file which should be deployed on chain.
- * This file is created when running either:
- *   - `npm run build:program-c`
- *   - `npm run build:program-rust`
- */
-const PROGRAM_SO_PATH = path.join(PROGRAM_PATH, 'kycdocument.so');
-
-/**
- * Path to the keypair of the deployed program.
- * This file is created when running `solana program deploy dist/program/kycdocument.so`
- */
-const 
-PROGRAM_KEYPAIR_PATH = path.join(PROGRAM_PATH, 'kycdocument-keypair.json');
 
 
 class InvoiceData {
@@ -66,16 +46,17 @@ class InvoiceData {
   invoicedate= "09-OCT-2021";
   customername= "Test Cust";
   invoiceamt=0;
-  isfinanced="N";  
-  constructor(fields: {invoiceno: string,suppliername:string, instruction:string,isfinanced:string,invoiceamt:number,invoicedate:string,customername:string} | undefined = undefined) {
+  isfinanced="N";
+  
+  constructor(fields: {invoiceno: string,suppliername:string, instruction:string,invoicedate:string,customername:string, invoiceamt:number,isfinanced:string} | undefined = undefined) {
     if (fields) {
-        this.invoiceno = fields.invoiceno;
+  this.invoiceno = fields.invoiceno;
 	this.suppliername = fields.suppliername;
-	this.customername = fields.customername;
-	this.invoicedate = fields.invoicedate;
-	this.invoiceamt = fields.invoiceamt;
 	this.instruction = fields.instruction;
-    	this.isfinanced = fields.isfinanced;
+	this.invoicedate = fields.invoicedate;
+	this.customername = fields.customername;
+  this.invoiceamt = fields.invoiceamt;
+  this.isfinanced=fields.isfinanced;
     }
   }
 }
@@ -90,25 +71,28 @@ class InvoiceData {
  * Borsh schema definition for Invoice data
  */
 const InvoiceDataSchema = new Map([
-  [InvoiceData, {kind: 'struct', fields: [['instruction', 'string'],['invoiceno', 'string'],['suppliername','string'],['isfinanced','string'],['invoicedate','string'],['invoiceamt','u32'],['customername','string']]}],
+  [InvoiceData, {kind: 'struct', fields: [['instruction', 'string'],['invoicedate','string'],['invoiceno', 'string'],['suppliername','string'],['customername','string'],['invoiceamt','u32'],['isfinanced','string']]}],
 ]);
 
-/**
- * The expected size of each invoice data.
- */
+const GREETING_SIZE = 10000;
 
-const GREETING_SIZE=2000;
+export async function initSolanaWallet() {
 
-//const GREETING_SIZE = borsh.serialize(
-  //InvoiceDataSchema,
-  //new InvoiceData(),
-//).length;
+  await establishConnection();
+
+  // Determine who pays for the fees
+  await establishPayer();
+
+  // Check if the program has been deployed
+  await checkProgram();
+
+}
 
 /**
  * Establish a connection to the cluster
  */
-export   async function establishConnection(): Promise<void> {
-  const rpcUrl = await getRpcUrl();
+ export   async function establishConnection(): Promise<void> {
+  const rpcUrl = "https://api.devnet.solana.com";
   connection = new Connection(rpcUrl, 'confirmed');
   const version = await connection.getVersion();
   console.log('Connection to cluster established:', rpcUrl, version);
@@ -129,7 +113,7 @@ export async function establishPayer(): Promise<void> {
     // Calculate the cost of sending transactions
     fees += feeCalculator.lamportsPerSignature * 100; // wag
 
-    payer = await getPayer();
+    payer = await createKeypairFromFile();
   }
 
   let lamports = await connection.getBalance(payer.publicKey);
@@ -153,30 +137,13 @@ export async function establishPayer(): Promise<void> {
 }
 
 /**
- * Check if the kycdocument BPF program has been deployed
+ * Check if the hello world BPF program has been deployed
  */
 export async function checkProgram(): Promise<void> {
-  // Read program id from keypair file
-  try {
-    const programKeypair = await createKeypairFromFile(PROGRAM_KEYPAIR_PATH);
-    programId = programKeypair.publicKey;
-  } catch (err) {
-    const errMsg = (err as Error).message;
-    throw new Error(
-      `Failed to read program keypair at '${PROGRAM_KEYPAIR_PATH}' due to error: ${errMsg}. Program may need to be deployed with \`solana program deploy dist/program/dockyc.so\``,
-    );
-  }
-
   // Check if the program has been deployed
 const programInfo = await connection.getAccountInfo(programId);
   if (programInfo === null) {
-    if (fs.existsSync(PROGRAM_SO_PATH)) {
-      throw new Error(
-        'Program needs to be deployed with `solana program deploy dist/program/dockyc.so`',
-      );
-    } else {
-      throw new Error('Program needs to be built and deployed');
-    }
+      throw new Error('Program has issues');
   } else if (!programInfo.executable) {
     throw new Error(`Program is not executable`);
   }
@@ -218,28 +185,32 @@ const programInfo = await connection.getAccountInfo(programId);
 }
 
 /**
- * Createinvoice data
+ * Save invoice data
  */
-export async function sendRequestData(jsonMessage : string): Promise<void> {
- await publishMessage(jsonMessage);
-}
+ export async function sendRequestData(jsonMessage : string): Promise<void> {
+   
+  await publishMessage(jsonMessage);
+ }
 
 /**
  * Query invoice data
  */
-export async function queryData(jsonMessage : string): Promise<void> {
- await publishMessage(jsonMessage);
+export async function queryData(jsonMessage:string): Promise<void> {
+ 
+  await publishMessage(jsonMessage);
 }
 
 /**
- * Update invoice data
+ * Update is financed
  */
-export async function updateData(jsonMessage:string): Promise<void> {
- await publishMessage(jsonMessage);
+ export async function updateData(jsonMessage:string): Promise<void> {
+
+  await publishMessage(jsonMessage);
 }
 
-export async function publishMessage(jsonMessage:string): Promise<void>{
-  console.log('Sending request data'+jsonMessage);
+export async function publishMessage(jsonMessage:string): Promise<void> {
+
+console.log('Sending request data'+jsonMessage);
   const paddedMsg = jsonMessage.padEnd(1000);
   const buffer = Buffer.from(paddedMsg, 'utf8');
 
@@ -256,5 +227,4 @@ export async function publishMessage(jsonMessage:string): Promise<void>{
 	      preflightCommitment: 'singleGossip',
     },
   );
-
 }
