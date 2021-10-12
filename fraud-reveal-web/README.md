@@ -1,4 +1,4 @@
-npm run build
+npm install
 
 npm start
 
