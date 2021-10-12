@@ -1,4 +1,4 @@
-[![Build status][travis-image]][travis-url] [![Gitpod
+[![Gitpod
 Ready-to-Code](https://img.shields.io/badge/Gitpod-Ready--to--Code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/kotirao27/solana_hackathon/fraud-reveal)
 
 # Invoice Fraud Reveal on Solana
@@ -31,14 +31,11 @@ The project comprises of:
   - [Learn about the client](#learn-about-the-client)
     - [Entrypoint](#entrypoint)
     - [Establish a connection to the cluster](#establish-a-connection-to-the-cluster)
-    - [Load the helloworld on-chain program if not already loaded](#load-the-helloworld-on-chain-program-if-not-already-loaded)
-    - [Send a "Hello" transaction to the on-chain program](#send-a-hello-transaction-to-the-on-chain-program)
-    - [Query the Solana account used in the "Hello" transaction](#query-the-solana-account-used-in-the-hello-transaction)
-  - [Learn about the on-chain program](#learn-about-the-on-chain-program)
-    - [Programming on Solana](#programming-on-Solana)
-  - [Pointing to a public Solana cluster](#pointing-to-a-public-solana-cluster)
-  - [Expand your skills with advanced examples](#expand-your-skills-with-advanced-examples)
-
+    - [Load the kycdocument on-chain program if not already loaded](#load-the-kycdocument-on-chain-program-if-not-already-loaded)
+    - [Send an Create Invocie transaction to the on-chain program](#send-a-create-invoice-to-the-on-chain-program)
+    - [Query the Solana account](#query-the-solana-account)
+    - [Update the Solana account](#update-the-solana-account)
+  
 ## Quick Start
 
 [![Open in
@@ -100,21 +97,17 @@ npm install
 
 ### Build the on-chain program
 
-There is both a Rust and C version of the on-chain program, whichever is built
+This is Rust version of the on-chain program, whichever is built
 last will be the one used when running the example.
 
 ```bash
 npm run build:program-rust
 ```
 
-```bash
-npm run build:program-c
-```
-
 ### Deploy the on-chain program
 
 ```bash
-solana program deploy dist/program/helloworld.so
+solana program deploy dist/program/kycdocument.so
 ```
 
 ### Run the JavaScript client
@@ -128,14 +121,15 @@ npm run start
 Public key values will differ:
 
 ```bash
-Let's say hello to a Solana account...
-Connection to cluster established: http://localhost:8899 { 'feature-set': 2045430982, 'solana-core': '1.7.8' }
-Using account AiT1QgeYaK86Lf9kudqKthQPCWwpG8vFA1bAAioBoF4X containing 0.00141872 SOL to pay for fees
-Using program Dro9uk45fxMcKWGb1eWALujbTssh6DW8mb4x8x3Eq5h6
-Creating account 8MBmHtJvxpKdYhdw6yPpedp6X6y2U9dCpdYaZJdmwV3A to say hello to
-Saying hello to 8MBmHtJvxpKdYhdw6yPpedp6X6y2U9dCpdYaZJdmwV3A
-8MBmHtJvxpKdYhdw6yPpedp6X6y2U9dCpdYaZJdmwV3A has been greeted 1 times
-Success
+Program H4ntmW2rW7RhLrmbNavdFd45nvVfvEV9VQt4ziRxj3kt invoke [1]
+Invoice Data storage called !!
+Received request is {"invoiceno":"inv001","suppliername":"supp1","customername":"cust1","invoiceamt":10,"instruction":"CREATE","invoicedate":"10-OCT-2021","isfinanced":"N"}
+Creation started
+Received account data []
+Updated data [InvoiceData { instruction: "CREATE", invoiceno: "inv001", suppliername: "supp1", customername: "cust1", invoicedate: "10-OCT-2021", invoiceamt: 10, isfinanced: "N" }]
+End create.
+Program H4ntmW2rW7RhLrmbNavdFd45nvVfvEV9VQt4ziRxj3kt consumed 37618 of 200000 compute units
+Program H4ntmW2rW7RhLrmbNavdFd45nvVfvEV9VQt4ziRxj3kt success
 ```
 
 #### Not seeing the expected output?
@@ -148,16 +142,16 @@ Success
     Signature: 4pya5iyvNfAZj9sVWHzByrxdKB84uA5sCxLceBwr9UyuETX2QwnKg56MgBKWSM4breVRzHmpb1EZQXFPPmJnEtsJ
     Status: Error processing Instruction 0: Program failed to complete
     Log Messages:
-      Program G5bbS1ipWzqQhekkiCLn6u7Y1jJdnGK85ceSYLx2kKbA invoke [1]
-      Program log: Hello World Rust program entrypoint
-      Program G5bbS1ipWzqQhekkiCLn6u7Y1jJdnGK85ceSYLx2kKbA consumed 200000 of 200000 compute units
+      Program H4ntmW2rW7RhLrmbNavdFd45nvVfvEV9VQt4ziRxj3kt invoke [1]
+      Program log: Rust program entrypoint
+      Program H4ntmW2rW7RhLrmbNavdFd45nvVfvEV9VQt4ziRxj3kt consumed 200000 of 200000 compute units
       Program failed to complete: exceeded maximum number of instructions allowed (200000) at instruction #334
-      Program G5bbS1ipWzqQhekkiCLn6u7Y1jJdnGK85ceSYLx2kKbA failed: Program failed to complete
+      Program H4ntmW2rW7RhLrmbNavdFd45nvVfvEV9VQt4ziRxj3kt failed: Program failed to complete
 
 ### Customizing the Program
 
 To customize the example, make changes to the files under `/src`.  If you change
-any files under `/src/program-rust` or `/src/program-c` you will need to
+any files under `/src/program-rust` you will need to
 [rebuild the on-chain program](#build-the-on-chain-program) and [redeploy the program](#deploy-the-on-chain-program).
 
 Now when you rerun `npm run start`, you should see the results of your changes.
@@ -179,48 +173,52 @@ The client in this example is written in TypeScript using:
 ### Entrypoint
 
 The [client's
-entrypoint](https://github.com/solana-labs/example-helloworld/blob/ad52dc719cdc96d45ad8e308e8759abf4792b667/src/client/main.ts#L13)
+entrypoint](https://github.com/kotirao27/solana_hackathon/fraud-reveal/src/client/main.ts#L13)
 does five things.
 
 ### Establish a connection to the cluster
 
 The client establishes a connection with the cluster by calling
-[`establishConnection`](https://github.com/solana-labs/example-helloworld/blob/ad52dc719cdc96d45ad8e308e8759abf4792b667/src/client/hello_world.ts#L92).
+[`establishConnection`](https://github.com/kotirao27/solana_hackathon/fraud-reveal/src/client/invoicekyc_client.ts#L110).
 
 ### Establish an account to pay for transactions
 
 The client ensures there is an account available to pay for transactions,
 and creates one if there is not, by calling
-[`establishPayer`](https://github.com/solana-labs/example-helloworld/blob/ad52dc719cdc96d45ad8e308e8759abf4792b667/src/client/hello_world.ts#L102).
+[`establishPayer`](https://github.com/kotirao27/solana_hackathon/fraud-reveal/src/client/invoicekyc_client.ts#L120).
 
-### Check if the helloworld on-chain program has been deployed
+### Check if the kycdocument on-chain program has been deployed
 
-In [`checkProgram`](https://github.com/solana-labs/example-helloworld/blob/ad52dc719cdc96d45ad8e308e8759abf4792b667/src/client/hello_world.ts#L144),
-the client loads the keypair of the deployed program from `./dist/program/helloworld-keypair.json` and uses
+In [`checkProgram`](https://github.com/kotirao27/solana_hackathon/fraud-reveal/src/client/invoicekyc_client.ts#L158),
+the client loads the keypair of the deployed program from `./dist/program/kycdocument-keypair.json` and uses
 the public key for the keypair to fetch the program account. If the program doesn't exist, the client halts
 with an error. If the program does exist, it will create a new account with the program assigned as its owner
-to store program state (number of hello's processed).
+to store program state.
 
-### Send a "Hello" transaction to the on-chain program
+### Send an Create Invocie transaction to the on-chain program
 
-The client then constructs and sends a "Hello" transaction to the program by
+The client then constructs and sends a Invoice payload to the program by
 calling
-[`sayHello`](https://github.com/solana-labs/example-helloworld/blob/ad52dc719cdc96d45ad8e308e8759abf4792b667/src/client/hello_world.ts#L209).
+[`sendRequestData`](https://github.com/kotirao27/solana_hackathon/fraud-reveal/src/client/invoicekyc_client.ts#L223).
 The transaction contains a single very simple instruction that primarily carries
-the public key of the helloworld program account to call and the "greeter"
-account to which the client wishes to say "Hello" to.
+the public key of the kycdocument program account to call and the 
+account to which the client want to save invocie data.
 
-### Query the Solana account used in the "Hello" transaction
+### Query the Solana account
 
-Each time the client says "Hello" to an account, the program increments a
-numerical count in the "greeter" account's data.  The client queries the
-"greeter" account's data to discover the current number of times the account has
-been greeted by calling
-[`reportGreetings`](https://github.com/solana-labs/example-helloworld/blob/ad52dc719cdc96d45ad8e308e8759abf4792b667/src/client/hello_world.ts#L226).
+Each time the client says saves an invoice to an account, the program add a new invoice data entry to the account's data.  The client queries the
+account data to filter the existing records by invoiceno and suppliername
+[`queryData`](https://github.com/kotirao27/solana_hackathon/fraud-reveal/src/client/invoicekyc_client.ts#L230).
+
+### Update the Solana account
+
+Each time the client says saves an invoice to an account, the program add a new invoice data entry to the account's data.  The client can update th isfinanced flag for a particular record based on invoiceno and supplier.
+[`updateData`](https://github.com/kotirao27/solana_hackathon/fraud-reveal/src/client/invoicekyc_client.ts#L237).
+
 
 ## Learn about the on-chain program
 
-The [on-chain helloworld program](/src/program-rust/Cargo.toml) is a Rust program
+The [on-chain kycdocument program](/src/program-rust/Cargo.toml) is a Rust program
 compiled to [Berkley Packet Format
 (BPF)](https://en.wikipedia.org/wiki/Berkeley_Packet_Filter) and stored as an
 [Executable and Linkable Format (ELF) shared
@@ -255,16 +253,3 @@ To point back to the local cluster:
 ```bash
 solana config set --url localhost
 ```
-
-## Expand your skills with advanced examples
-
-There is lots more to learn; The following examples demonstrate more advanced
-features like custom errors, advanced account handling, suggestions for data
-serialization, benchmarking, etc...
-
-- [Programming
-  Examples](https://github.com/solana-labs/solana-program-library/tree/master/examples)
-- [Token
-  Program](https://github.com/solana-labs/solana-program-library/tree/master/token)
-- [Token Swap
-  Program](https://github.com/solana-labs/solana-program-library/tree/master/token-swap)
