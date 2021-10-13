@@ -78,7 +78,7 @@ export async function initSolanaWallet() {
  * Establish a connection to the cluster
  */
  export   async function establishConnection(): Promise<void> {
-  const rpcUrl = "https://api.devnet.solanc.com";
+  const rpcUrl = "https://api.devnet.solana.com";
   connection = new Connection(rpcUrl, 'confirmed');
   const version = await connection.getVersion();
   console.log('Connection to cluster established:', rpcUrl, version);
