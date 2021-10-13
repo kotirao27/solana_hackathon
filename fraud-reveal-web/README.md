@@ -1,5 +1,5 @@
-By David Choi
+npm install
 
-Solana sample app to show wallet connection, message send, and lamport send.
+npm start
 
-The video explaining this code is here https://youtu.be/wVPGJ_CZTAw
+open the browser on http://localhost:3000
