@@ -125,6 +125,7 @@ pub fn update_data(
     .unwrap();
 
     msg!("Found index {}", position);
+    existing_data.data[position].isfinanced = inv_object.isfinanced;
     }
 
     //existing_data[position].isfinanced = inv_object.isfinanced;
