@@ -78,7 +78,7 @@ export async function initSolanaWallet() {
  * Establish a connection to the cluster
  */
  export   async function establishConnection(): Promise<void> {
-  const rpcUrl = "http://localhost:8899";
+  const rpcUrl = "https://api.devnet.solana.com";
   connection = new Connection(rpcUrl, 'confirmed');
   const version = await connection.getVersion();
   console.log('Connection to cluster established:', rpcUrl, version);
@@ -178,7 +178,7 @@ const programInfo = await connection.getAccountInfo(programId);
   return publishMessage(jsonMessage);
  }
 
- export async function queryCompleteData(): Promise<InvoiceDataList> {
+export async function queryCompleteData(suppliername:string): Promise<InvoiceDataList> {
  
   const accountInfo =  await connection.getAccountInfo(greetedPubkey);
 
@@ -187,9 +187,11 @@ const programInfo = await connection.getAccountInfo(programId);
   }
 
   const data = borsh.deserializeUnchecked(InvoiceDataSchema, InvoiceDataList, accountInfo.data);
-  console.log(data);
-  return data;
-
+  if( suppliername !="" ){
+    return  data.data.filter((invoice: { suppliername: string; }) => invoice.suppliername == suppliername);
+  }
+  else  return [];
+  
 }
 
 /**

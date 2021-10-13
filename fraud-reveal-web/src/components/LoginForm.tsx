@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import "./LoginForm.css";
 import Link,{ useHistory } from "react-router-dom";
-import { RouteComponentProps } from "react-router-dom"
+import { RouteComponentProps } from "react-router-dom";
+import {setUser} from '../helpers/utils';
 
 
 interface RouterProps {
@@ -46,12 +47,13 @@ export default class LoginForm extends React.Component<Props, State> {
       }
 
       handleLogin(){
-        if(this.state.username =="supplier@test.com") {
+        window.sessionStorage.setItem("user", this.state.username);
+        if(this.state.username =="One Plus" || this.state.username =="Sony"|| this.state.username =="Toshiba") {
             this.props.history.push("/viewdocuments");
-        } else if(this.state.username =="fiuser@test.com"){
+        } else if(this.state.username =="fiuser"){
           this.props.history.push("/fipage");
         }
-        else if(this.state.username =="bankuser@test.com"){
+        else if(this.state.username =="bankuser"){
           this.props.history.push("/fipage");
         }
         else {
@@ -76,7 +78,7 @@ export default class LoginForm extends React.Component<Props, State> {
 				<form method="post" action="" autoComplete="off" >
 					<input type="text" id="username" name="username" value={ this.state.username } className="login-form-field" onChange={this.setUserName} placeholder="Username" autoFocus />
 					<input type="password" id="password" name="password" className="login-form-field" onChange={this.setPassword} placeholder="Password" />		
-					<button type="button" id="submitbut" name="submitbut" className="login-button" value="Sign In" onChange={this.setPassword} onClick={this.handleLogin}> Login</button>
+					<button type="button" id="submitbut" name="submitbut" className="login-button" value="Sign In"  onClick={this.handleLogin}> Login</button>
 				  {this.state.showmessage ? (<span className="error-msg">Username or Password is incorrect</span>) :null}
         </form>
 			</div>

@@ -8,6 +8,17 @@ import path from 'path';
 import yaml from 'yaml';
 import {Keypair} from '@solana/web3.js';
 
+
+let user:string;
+
+export async function setUser(username:string){
+  user = username;
+}
+
+export async function getUser():Promise<String> {
+  console.log(user);
+ return user; 
+}
 /**
  * @private
  */

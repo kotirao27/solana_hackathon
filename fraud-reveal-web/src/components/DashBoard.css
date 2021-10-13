@@ -15,6 +15,25 @@
 	align-items: center;
 	margin: 10px 0px;
 }
+.search-section{
+  width:175px;
+  margin:auto;
+}
+.finance-img{
+  width: 60px;
+}
+.search-section-button{
+
+  margin-left: 40px;
+  margin-top: -16px;
+}
+
+.right-sec-search{
+position:absolute;
+margin-left: 230px;
+
+}
+
 .main-body-container .dashboard-container .button-section .action-button{
 	background:#017A93;
 	text-align:center;

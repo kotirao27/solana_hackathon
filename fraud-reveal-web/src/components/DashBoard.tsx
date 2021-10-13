@@ -3,13 +3,10 @@ import "./DashBoard.css";
 import { RouteComponentProps } from "react-router-dom"
 import logout from '../images/icon_logout.png';
 import {sendRequestData, queryCompleteData, InvoiceDataList, InvoiceData } from "../helpers/wallet";
-import { render } from "react-dom";
 import{Modal, Button, Form} from 'react-bootstrap';
-import "./bootstrap.css"
-import Alert from 'react-popup-alert'
+import "./bootstrap.css";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
 
 
 interface RouterProps {
@@ -21,10 +18,11 @@ interface RouterProps {
 type Props = RouteComponentProps<RouterProps>;
 
 type State = {
+    user:any,
     show: boolean,
-    invoicedata: InvoiceData[],
+    invoicedata: any,
     invoiceno: string,
-    suppliername: string,
+    suppliername: any,
     customername: string,
     invoiceamt: number,
     isfinanced: string,
@@ -42,6 +40,7 @@ export default class DashBoard extends React.Component<Props, State> {
       this.handleShow = this.handleShow.bind(this);
       
         this.state = {
+          user: "",
           show: false,
           invoicedata: [],
           invoiceno: "",
@@ -53,22 +52,23 @@ export default class DashBoard extends React.Component<Props, State> {
           alerttype:'error',
           alertmessage:'',
           alertshow:false
-        };
-        
+        }; 
       }
 
       componentDidMount(){
-        queryCompleteData().then(value => {
-        this.setState({invoicedata: value.data});
-        });
+         
+          let currentuser = window.sessionStorage.getItem('user');
+          this.setState({user : currentuser});
+          this.setState({suppliername:currentuser});
+         if(currentuser != undefined && currentuser != "") {
+          queryCompleteData(currentuser).then(value => {
+          this.setState({invoicedata: value});
+         });
+         }
       }
 
       setInvoiceNo(e: any){
        this.setState({invoiceno: e.target.value});
-      }
-
-      setSupplierName(e: any){
-        this.setState({suppliername: e.target.value});
       }
 
       setCustomerName(e: any){
@@ -78,7 +78,6 @@ export default class DashBoard extends React.Component<Props, State> {
       setDocumentAmt(e: any){
         this.setState({invoiceamt: e.target.value});
       }
-
 
       onCloseAlert() {
         this.setState({
@@ -98,14 +97,14 @@ export default class DashBoard extends React.Component<Props, State> {
             show: false
           });
           this.setState({invoicedata: []});
-          queryCompleteData().then(value => {
-            this.setState({invoicedata: value.data});
+          queryCompleteData(this.state.user).then(value => {
+            this.setState({invoicedata: value});
             });
       } 
 
     handleSaveDoc(){
 
-    let requestData = "{\"invoiceno\""+":"+"\""+this.state.invoiceno+"\",\"suppliername\""+":"+"\""+this.state.suppliername+"\",\"customername\""+":"+"\""+this.state.customername+"\",\"invoiceamt\""+":"+this.state.invoiceamt+",\"instruction\""+":"+"\"CREATE"+"\",\"invoicedate\""+":"+"\"10-OCT-2021"+"\",\"isfinanced\""+":"+"\"N"+"\"}";
+    let requestData = "{\"invoiceno\""+":"+"\""+this.state.invoiceno+"\",\"suppliername\""+":"+"\""+this.state.suppliername+"\",\"customername\""+":"+"\""+this.state.customername+"\",\"invoiceamt\""+":"+this.state.invoiceamt+",\"instruction\""+":"+"\"CREATE"+"\",\"invoicedate\""+":"+"\"14-OCT-2021"+"\",\"isfinanced\""+":"+"\"N"+"\"}";
 
     console.log(requestData);
        
@@ -113,11 +112,16 @@ export default class DashBoard extends React.Component<Props, State> {
       console.log('resolved', value);
       this.setState({show:false});
       this.setState({invoiceno:""});
-      this.setState({suppliername:""});
+    //  this.setState({suppliername:""});
       this.setState({customername:""});
       this.setState({invoiceamt:0});
       
       toast.success('Save successful !!');
+      this.setState({invoicedata: []});
+          queryCompleteData(this.state.user).then(value => {
+            this.setState({invoicedata: value});
+      });
+ 
  
     }).catch(error => {
       console.log('rejected', error);
@@ -136,7 +140,7 @@ export default class DashBoard extends React.Component<Props, State> {
 	<div className="header-left"><a href="#" className="logo-text">FRAUD REVEAL</a></div>
 	<div  className="header-right">
 		<ul className="menu-section">
-			<li className="menu-list"><div className="user-section"><span className="welcome-text">Welcome !</span><h3 className="user-name">Supplier</h3></div></li>
+			<li className="menu-list"><div className="user-section"><span className="welcome-text">Welcome !</span><h3 className="user-name">{this.state.user}</h3></div></li>
 			<li className="menu-list"><div className="user-initial">RA</div></li>
 			<li className="menu-list"><a href="/" title="Logout" className="meun-item" data-toggle="tooltip" data-placement="top"><img src={logout} alt="Icon"></img></a></li>				
 		</ul>
@@ -171,17 +175,17 @@ pauseOnHover
 					<tr>
 						<th scope="col">Document Number</th>
 						<th scope="col">Supplier Name</th>
-						<th scope="col" className="align-center">Currency</th>
+						<th scope="col" className="align-center">Customer</th>
 						<th scope="col" className="align-right">Amount</th>
 						<th scope="col" className="align-center th-col-date">Date</th>
 					</tr>
 				</thead>
 				<tbody>
-        {this.state.invoicedata.map((item =>
+        {this.state.invoicedata.map(((item: { invoiceno: string | React.ReactChild | React.ReactFragment | React.ReactPortal | null | undefined; suppliername: string | React.ReactChild | React.ReactFragment | React.ReactPortal | null | undefined; invoiceamt: string | React.ReactChild | React.ReactFragment | React.ReactPortal | null | undefined; invoicedate: string | React.ReactChild | React.ReactFragment | React.ReactPortal | null | undefined; customername: string | React.ReactChild | React.ReactFragment | React.ReactPortal | null | undefined; }) =>
           <tr>
           <td>{item.invoiceno}</td>
           <td>{item.suppliername}</td>
-          <td className="align-center">USD</td>
+          <td className="align-center">{item.customername}</td>
           <td className="align-right">{item.invoiceamt}</td>
           <td className="align-center th-col-date">{item.invoicedate}</td>				
          </tr>
@@ -202,16 +206,13 @@ pauseOnHover
         </Modal.Header>
         <Modal.Body>
 
-       {this.state.showSuccess ? (
-         <span >Save successful !</span>
-       ) : null}
         <Form.Group >
               <Form.Label>Document number: </Form.Label>
               <Form.Control type="text" id="invoiceno" name="invoiceno" onChange={this.setInvoiceNo.bind(this)} value={ this.state.invoiceno }
               placeholder="Input Document number"/>        
 
               <Form.Label>Supplier name: </Form.Label>
-              <Form.Control type="text" id="suppliername" name="suppliername" onChange={this.setSupplierName.bind(this)} value={ this.state.suppliername }
+              <Form.Control type="text" id="suppliername" name="suppliername"  value={ this.state.suppliername }
               placeholder="Input Supplier name"/>     
 
               <Form.Label>Customer name: </Form.Label>
