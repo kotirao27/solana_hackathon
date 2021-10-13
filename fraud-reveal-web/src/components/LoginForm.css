@@ -1,0 +1,206 @@
+
+/*---- LOGIN PAGE ----*/
+.login-container{
+	display:block;
+	height: 100vh;
+}
+.login-container .login-left-panel{
+	width:55%;
+	height:100vh;
+	background:#017b93 url(../images/login_bg.svg) no-repeat center center;
+	background-size: 60%;
+	float:left;
+	position:relative;
+}
+.login-container .login-right-panel{
+	width:45%;
+	height:100vh;
+	background:#017b93;
+	float:right;
+	padding:0px;
+	position:relative;
+	display: flex;
+	align-content: space-around;
+    justify-content: space-around;
+    align-items: center;
+}
+.login-container .login-right-panel .login-content-block{
+	background: #fff;
+	width:450px;
+	height: 60%;
+	padding: 30px;
+	border-radius: 20px;
+}
+.login-container .login-right-panel .login-content-block .login-title-section{
+	text-align:center;
+	margin-bottom:25px;
+}
+.login-container .login-right-panel .login-content-block .login-title-section .title-2{
+	color:#333333;
+	font-size:25px;
+	text-transform: uppercase;
+	font-weight: 600;
+	margin-bottom: 50px;
+}
+.login-container .login-right-panel .login-content-block .login-form-section{
+}
+.login-container .login-right-panel .login-content-block .login-form-section .login-form-field{
+	display:block;
+	width:100%;
+	padding:15px 10px 15px 10px;
+	margin-bottom:20px;
+	border:0;
+	border-bottom:1px solid #DCDCDC;
+	outline:0;
+	background: #f9f9f9;	
+}
+.login-container .login-right-panel .login-content-block .login-form-section .terms-section{
+	display: flex;
+	justify-content:space-between;
+}
+.login-container .login-right-panel .login-content-block .login-form-section .terms-section .check-label{
+	color:#A0A0A0;
+	font-size:13px;	
+}
+.login-container .login-right-panel .login-content-block .login-form-section .terms-section .check-label .login-form-checkbox{
+	float: left;
+}
+.login-container .login-right-panel .login-content-block .login-form-section .terms-section .terms-link{
+	color:#02add6;
+	font-size:13px;
+}
+::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+  color:#AAA;
+}
+::-moz-placeholder { /* Firefox 19+ */
+  color:#AAA;
+}
+:-ms-input-placeholder { /* IE 10+ */
+  color:#AAA;
+}
+:-moz-placeholder { /* Firefox 18- */
+  color:#AAA'''';
+}
+.login-container .login-right-panel .login-content-block .login-form-section .login-button{
+	background:#FF851D;
+	width:100%;
+	text-align:center;
+	border:0;
+	color:#fff;
+	font-size:14px;
+	text-transform:uppercase;
+	font-weight:600;
+	padding:12px 10px;
+	cursor:pointer;
+	margin-top:15px;
+	margin-bottom:20px;
+	border-radius: 20px;
+}
+.login-container .login-right-panel .login-content-block .login-form-section .error-msg{
+	display: block;
+	color: #f00;
+	font-size: 12px;
+	text-align: center;
+}
+.login-container .login-right-panel .support-content-sec{
+	display:block;
+	position:absolute;
+	width:100%;
+	padding:0px 0px;
+	bottom:0px;
+}
+
+/*---- HEADER SECTION ----*/
+.header-section{
+	background:#fff;
+	box-shadow: 0 0.5rem 1rem rgba(0,0,0,.05), inset 0 -1px 0 rgba(0,0,0,.1);
+	height:65px;
+	display: flex;
+    padding: 10px 20px;
+    justify-content: space-between;
+    align-items: center;
+}
+.header-section .header-left{
+}
+.header-section .header-left .logo-text {
+	color:#017A93;
+	font-size:20px;
+	text-transform: uppercase;
+	font-weight: 600;
+}
+.menu-section{
+	padding: 0px !important;
+	margin: 0px !important;
+}
+.menu-section .menu-list{
+	display:inline-block;
+	margin-left:5px;
+	vertical-align:middle;
+}
+.menu-section .menu-list .meun-item{
+	display:block;
+	width:30px;
+	height:30px;
+	cursor:pointer;
+	line-height:17px;
+}
+.menu-section .menu-list .meun-item img{
+	max-height:100%;
+	max-width:100%;
+}
+
+.menu-section .user-section{
+	text-align:right;
+	/* border-right:1px solid #ECECEC; */
+	padding:0px 0px 0px 0px;
+}
+.menu-section .user-section .welcome-text{
+	display:block;
+	color:#999;
+	font-size:12px;
+}
+.menu-section .user-section .user-name{
+	color:#333;
+	font-size:13px;
+}
+.menu-section .menu-list .user-initial{
+	width: 35px;
+	height: 35px;
+	border-radius: 50%;
+	background: #017A93;
+	color: #fff;
+	text-align: center;
+	text-transform: uppercase;
+	line-height: 35px;
+	font-size: 18px;
+	margin-right: 0px;
+}
+/*-- //HEADER SECTION --*/
+/*-- FOOTER SECTION --*/
+.footer-section {
+	bottom: 0;
+	height: 35px;
+	line-height: 35px;
+	background-color: #f5f5f5;
+	z-index:1001;
+}
+.footer-section .footer-content{
+	text-align:center;
+	color:#777;
+	font-size:11px;
+	font-weight:600;
+}
+/*-- //FOOTER SECTION --*/
+/*---- DASHBOARD PAGE ----*/
+.main-body-container{
+	background:#E2E8E8;
+	min-height: calc(100vh - 100px);
+	position: relative;
+	display: flex;
+	/* padding: 20px; */
+}
+.main-body-container .dashboard-container{
+	padding: 20px 0;
+	background:#E2E8E8;
+	
+}

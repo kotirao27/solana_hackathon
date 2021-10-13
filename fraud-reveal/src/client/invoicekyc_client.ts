@@ -83,14 +83,16 @@ class InvoiceData {
  class InvoiceDataList {
    
     data: InvoiceData[] = [];
+   
      
  }
+
 
 /**
  * Borsh schema definition for Invoice data
  */
 const InvoiceDataSchema = new Map([
-  [InvoiceData, {kind: 'struct', fields: [['instruction', 'string'],['invoiceno', 'string'],['suppliername','string'],['isfinanced','string'],['invoicedate','string'],['invoiceamt','u32'],['customername','string']]}],
+  [InvoiceDataList, {kind: 'struct', fields: [['data',[2000]]]}],
 ]);
 
 /**
@@ -227,8 +229,22 @@ export async function sendRequestData(jsonMessage : string): Promise<void> {
 /**
  * Query invoice data
  */
-export async function queryData(jsonMessage : string): Promise<void> {
- await publishMessage(jsonMessage);
+export async function queryData(): Promise<void> {
+ //await publishMessage(jsonMessage);
+const accountInfo = await connection.getAccountInfo(greetedPubkey);
+  if (accountInfo === null) {
+	      throw 'Error: cannot find the greeted account';
+  }
+
+  console.log(accountInfo);
+  const greeting = borsh.deserialize(
+         	      InvoiceDataSchema,
+	              InvoiceDataList,
+	 	      accountInfo.data,
+	          );
+ console.log(greeting);
+
+
 }
 
 /**

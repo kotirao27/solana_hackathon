@@ -1,38 +1,37 @@
-import { Connection } from "@solana/web3.js";
-import React, { useEffect, useState } from "react";
+import * as React from 'react';
+import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom';
 import "./App.css";
+import LoginForm from './components/LoginForm';
+import DashBoard from "./components/DashBoard";
 import Sender from "./components/Sender";
-import TransactionsView from "./components/TransactionView";
-import {
-  getTransactions,
-  TransactionWithSignature,
-} from "./helpers/transactions";
+import Query from "./components/Query";
+
+
 import { initSolanaWallet, WalletAdapter } from "./helpers/wallet";
 
-function App() {
-  const [transactions, setTransactions] =
-    useState<Array<TransactionWithSignature>>();
-  const conn = React.useRef<Connection>();
-  const wall = React.useRef<WalletAdapter>();
-
-  useEffect(() => {
-    initSolanaWallet();
-  }, []);
-
-  const didSaveInvoice = () => {
-   // getTransactions(conn.current!, wall.current!.publicKey!).then((trans) => {
-    //  setTransactions(trans);
-   // });
-  };
-
-  return (
-    <div className="app-body">
-      <div className="app-body-top">
-        <h3>Upload Invoice</h3>
-        <Sender didSaveInvoice={didSaveInvoice} />
-      </div>
-    </div>
-  );
+interface IState {
+  isSmallScreen: boolean;
 }
+  class App extends React.Component<{}, IState> {
+  constructor(props : any){
+    super(props);
 
+    initSolanaWallet();
+}
+  
+  public render() {
+    return (
+      <BrowserRouter>
+        <div>
+          <Switch>
+            <Route exact={true} path="/" component={LoginForm}/>
+            <Route path="/viewdocuments" component={DashBoard}/>
+            <Route path="/fipage" component={Query}/>
+            <Redirect to="/" />
+          </Switch>
+        </div>
+      </BrowserRouter>
+    );
+  }
+}
 export default App;

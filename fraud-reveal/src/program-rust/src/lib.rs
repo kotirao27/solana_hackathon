@@ -22,6 +22,12 @@ pub struct InvoiceData {
     pub isfinanced: String
 }
 
+
+#[derive(Debug, Deserialize, Serialize, BorshDeserialize, BorshSerialize,Clone)]
+pub struct InvoiceDataList {
+   pub data: Vec<InvoiceData>
+   
+}
 // Declare and export the program's entrypoint
 entrypoint!(process_instruction);
 
@@ -64,7 +70,7 @@ pub fn process_instruction(
             msg!("Creation started");
            
              // using slice_unchecked, when buffer size is high
-             let mut existing_data = try_from_slice_unchecked(&account.data.borrow()[..])?;
+             let mut  existing_data = try_from_slice_unchecked(&account.data.borrow()[..])?;
         
              create_data(inv_object, &mut existing_data);  
              msg!("Updated data {:?}", &existing_data);
@@ -74,17 +80,6 @@ pub fn process_instruction(
         
            },
           
-          "QUERY" => {
-
-            msg!("Query started");
-        
-             let mut existing_data = try_from_slice_unchecked(&account.data.borrow()[..])?;
-        
-             let result =  query_data(inv_object, &mut existing_data);  
-             msg!("Result data {:?}", &result);
-    
-             Ok(())
-           },
            
            "UPDATE" => {
 
@@ -106,52 +101,34 @@ pub fn process_instruction(
 
 pub fn create_data(
     inv_object: InvoiceData,
-    existing_data: &mut Vec<InvoiceData>,
-) ->  Vec<InvoiceData>{
+    existing_data: &mut InvoiceDataList,
+) {
 
     msg!("Received  account data {:?}", &existing_data);
-    existing_data.push(inv_object);
-    return existing_data.to_vec();
+    existing_data.data.push(inv_object);
     
-}
-
-pub fn query_data(
-    inv_object: InvoiceData,
-    existing_data: &mut Vec<InvoiceData>,
-) ->  Vec<InvoiceData>{
-
-    if inv_object.invoiceno =="" || inv_object.suppliername=="" {
-    return existing_data.to_vec();
-    }
-
-     let result_data:Vec<InvoiceData> = existing_data
-    .iter()
-    .filter(|inv| inv.invoiceno == inv_object.invoiceno && inv.suppliername == inv_object.suppliername)
-    .cloned()
-    .collect();
-
-     return result_data;
     
 }
 
 pub fn update_data(
     inv_object: InvoiceData,
-    existing_data: &mut Vec<InvoiceData>,
-) ->  Vec<InvoiceData>{
+    existing_data: &mut InvoiceDataList,
+) {
 
     if inv_object.invoiceno =="" || inv_object.suppliername=="" {
-     return existing_data.to_vec();
-    }
+     //return existing_data;
+    } else {
 
-     let position = existing_data
+     let position = existing_data.data
     .iter()
     .position(|inv| inv.invoiceno == inv_object.invoiceno && inv.suppliername == inv_object.suppliername)
     .unwrap();
 
     msg!("Found index {}", position);
+    }
 
-    existing_data[position].isfinanced = inv_object.isfinanced;
+    //existing_data[position].isfinanced = inv_object.isfinanced;
 
-    return existing_data.to_vec();
+    //return existing_data;
     
 }

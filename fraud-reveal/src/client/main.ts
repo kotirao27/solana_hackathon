@@ -24,6 +24,7 @@ async function main() {
   
   //await updateData('{"instruction":"CREATE","invoiceno":"test3","suppliername":"test3","isfinanced":"N"}');
  
+  await queryData();
 
   console.log('Success');
 }

@@ -23,7 +23,7 @@ export interface WalletAdapter extends EventEmitter {
   disconnect: () => any;
 }
 
-let programId = new PublicKey("H4ntmW2rW7RhLrmbNavdFd45nvVfvEV9VQt4ziRxj3kt");
+let programId = new PublicKey("5uZ17XrpjeqoG2ENCyFWS5foD7CJR4xkitaYxQ3nPLdc");
 
 let connection: Connection;
 
@@ -38,43 +38,29 @@ let payer: Keypair;
 let greetedPubkey: PublicKey;
 
 
-class InvoiceData {
-  
-  invoiceno = "123e4567-e89b-12d3-a456-556642440000";
-  suppliername = "123e4567-e89b-12d3-a456-556642440000";
-  instruction ="CREATE";
-  invoicedate= "09-OCT-2021";
-  customername= "Test Cust";
-  invoiceamt=0;
-  isfinanced="N";
-  
-  constructor(fields: {invoiceno: string,suppliername:string, instruction:string,invoicedate:string,customername:string, invoiceamt:number,isfinanced:string} | undefined = undefined) {
-    if (fields) {
-  this.invoiceno = fields.invoiceno;
-	this.suppliername = fields.suppliername;
-	this.instruction = fields.instruction;
-	this.invoicedate = fields.invoicedate;
-	this.customername = fields.customername;
-  this.invoiceamt = fields.invoiceamt;
-  this.isfinanced=fields.isfinanced;
+class Assignable
+{
+    [index:string]:any;
+    constructor(properties:{[index:string]:any}) 
+    {
+        Object.keys(properties).map((key:string) => {
+            this[key] = properties[key];
+        });
     }
-  }
 }
 
- class InvoiceDataList {
-   
-    data: InvoiceData[] = [];
-     
- }
+export class InvoiceDataList extends Assignable {}
 
-/**
- * Borsh schema definition for Invoice data
- */
+export class InvoiceData extends Assignable {}
+
+
 const InvoiceDataSchema = new Map([
-  [InvoiceData, {kind: 'struct', fields: [['instruction', 'string'],['invoicedate','string'],['invoiceno', 'string'],['suppliername','string'],['customername','string'],['invoiceamt','u32'],['isfinanced','string']]}],
+  [InvoiceDataList, { kind: "struct", fields: [["data", [InvoiceData]]] }],
+  [InvoiceData, {kind: 'struct', fields: [['instruction', 'string'],['invoiceno','string'],['suppliername', 'string'],['customername','string'],['invoicedate','string'],['invoiceamt','u32'],['isfinanced','string']]}]
 ]);
 
-const GREETING_SIZE = 10000;
+
+const GREETING_SIZE = 2000;
 
 export async function initSolanaWallet() {
 
@@ -92,7 +78,7 @@ export async function initSolanaWallet() {
  * Establish a connection to the cluster
  */
  export   async function establishConnection(): Promise<void> {
-  const rpcUrl = "https://api.devnet.solana.com";
+  const rpcUrl = "http://localhost:8899";
   connection = new Connection(rpcUrl, 'confirmed');
   const version = await connection.getVersion();
   console.log('Connection to cluster established:', rpcUrl, version);
@@ -187,28 +173,60 @@ const programInfo = await connection.getAccountInfo(programId);
 /**
  * Save invoice data
  */
- export async function sendRequestData(jsonMessage : string): Promise<void> {
+ export async function sendRequestData(jsonMessage : string): Promise<string> {
    
-  await publishMessage(jsonMessage);
+  return publishMessage(jsonMessage);
  }
+
+ export async function queryCompleteData(): Promise<InvoiceDataList> {
+ 
+  const accountInfo =  await connection.getAccountInfo(greetedPubkey);
+
+  if (accountInfo === null) {
+    throw 'Error: cannot find the greeted account';
+  }
+
+  const data = borsh.deserializeUnchecked(InvoiceDataSchema, InvoiceDataList, accountInfo.data);
+  console.log(data);
+  return data;
+
+}
 
 /**
  * Query invoice data
  */
-export async function queryData(jsonMessage:string): Promise<void> {
+export async function queryData(invoiceno: string, suppliername: string): Promise<InvoiceDataList> {
  
-  await publishMessage(jsonMessage);
+  const accountInfo =  await connection.getAccountInfo(greetedPubkey);
+
+  if (accountInfo === null) {
+    throw 'Error: cannot find the greeted account';
+  }
+
+  const invoicedata:InvoiceDataList = borsh.deserializeUnchecked(InvoiceDataSchema, InvoiceDataList, accountInfo.data);
+  
+  if(invoiceno =="" && suppliername !="" ){
+     return  invoicedata.data.filter((invoice: { suppliername: string; }) => invoice.suppliername == suppliername);
+  }
+  else if(invoiceno !="" && suppliername =="" ) {
+    return  invoicedata.data.filter((invoice: { invoiceno: string; }) => invoice.invoiceno == invoiceno);
+  }
+  else  {
+    return  invoicedata.data.filter((invoice: { invoiceno: string; suppliername:string }) => invoice.invoiceno == invoiceno && invoice.suppliername == suppliername);
+
+  }
+
 }
 
 /**
  * Update is financed
  */
- export async function updateData(jsonMessage:string): Promise<void> {
+ export async function updateData(jsonMessage:string): Promise<string> {
 
-  await publishMessage(jsonMessage);
+  return publishMessage(jsonMessage);
 }
 
-export async function publishMessage(jsonMessage:string): Promise<void> {
+export async function publishMessage(jsonMessage:string): Promise<string> {
 
 console.log('Sending request data'+jsonMessage);
   const paddedMsg = jsonMessage.padEnd(1000);
@@ -219,7 +237,7 @@ console.log('Sending request data'+jsonMessage);
     programId,
     data: buffer,
   });
-  await sendAndConfirmTransaction(
+  return sendAndConfirmTransaction(
     connection,
     new Transaction().add(instruction),
     [payer],
