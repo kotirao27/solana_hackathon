@@ -102,6 +102,8 @@ export default class Query extends React.Component<Props, State> {
       
       let data =  this.state.invoicedata[0];
       this.setState({customername: data.customername});
+      
+      this.setState({suppliername: data.suppliername});
       this.setState({invoiceamt: data.invoiceamt});
     
     }).catch(error => {
