@@ -108,7 +108,7 @@ export default class Query extends React.Component<Props, State> {
     
     }).catch(error => {
       console.log('rejected', error);
-      toast.error('Error querying request');
+      toast.error('No recrords found');
     });
     }
 
