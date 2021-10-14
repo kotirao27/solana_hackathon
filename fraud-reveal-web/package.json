@@ -1,6 +1,6 @@
 {
-  "name": "send-money",
-  "version": "0.1.0",
+  "name": "fraud-reveal-web",
+  "version": "0.2.0",
   "private": true,
   "dependencies": {
     "@project-serum/sol-wallet-adapter": "^0.2.0",
