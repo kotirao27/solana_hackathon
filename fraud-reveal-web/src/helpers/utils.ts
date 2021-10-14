@@ -43,6 +43,6 @@ export async function createKeypairFromFile(
 //  const config = await getConfig();
 
   //const secretKeyString = await fs.readFile('/home/kotirao227/.config/solana/id.json', {encoding: 'utf8'});
-  const secretKey = Uint8Array.from(JSON.parse("[62,127,255,97,109,17,53,127,53,181,173,6,92,251,22,3,218,31,47,121,178,207,178,234,122,202,233,181,242,163,96,45,14,159,182,78,27,169,224,7,51,209,49,98,32,217,32,213,247,110,119,231,120,60,150,236,102,56,205,234,217,185,58,33]"));
+  const secretKey = Uint8Array.from(JSON.parse("[36,211,126,107,194,118,130,25,72,228,74,19,110,217,133,42,220,206,119,77,109,211,11,89,32,64,200,90,50,243,165,223,58,196,136,132,20,232,54,181,126,11,104,129,49,177,179,64,50,174,93,163,107,128,226,124,171,197,159,21,5,88,133,142]"));
   return Keypair.fromSecretKey(secretKey);
 }
