@@ -158,17 +158,15 @@ pauseOnHover
 
 <main role="main" className="main-body-container">
 	<section className="container dashboard-container">
-		<div className="button-section">
-			<div className="left-sec">
-            <Form.Control type="text" id="searchinvoice" name="searchinvoice"  onChange={this.setInvoiceNo.bind(this)} value={ this.state.invoiceno }
-              placeholder="Document number"/>
-            <Form.Control type="text" id="searchsupp" name="searchsupp"  onChange={this.setSupplierName.bind(this)} value={ this.state.suppliername }
-              placeholder="Supplier number"/>        
-            </div>
-			<div className="right-sec-search">
-            <Button variant="primary" className="action-button" onClick={this.handleQuery.bind(this)}>Search</Button> 
-			</div>			
-		</div>
+    <div className="main-search-block">
+      <Form.Control type="text" id="searchinvoice" name="searchinvoice"  onChange={this.setInvoiceNo.bind(this)} value={ this.state.invoiceno }
+      placeholder="Document number" className="search-field"/>
+      <Form.Control type="text" id="searchsupp" name="searchsupp"  onChange={this.setSupplierName.bind(this)} value={ this.state.suppliername }
+      placeholder="Supplier number" className="search-field"/>
+      <Button variant="primary" className="action-button" onClick={this.handleQuery.bind(this)}>Search</Button> 
+    </div>
+    {this.state.invoicedata != "" ? (
+	
 		<div className="table-conatiner">
 			<table className="table custom-table">
 				<thead>
@@ -195,6 +193,7 @@ pauseOnHover
 				</tbody>
 			</table>
 		</div>
+    ) : "No record found"}
 	</section>
 </main>
 <footer className="footer-section">
@@ -211,7 +210,26 @@ pauseOnHover
          <span >Save successful !</span>
        ) : null}
         <Form.Group >
-              <Form.Label>Document number: </Form.Label>
+          <div className="row popup-container">
+              <div className="col-lg-6 pop-view-block">
+                <label className="view-lable">Document Number</label>
+                <span className="view-value">{ this.state.invoiceno }</span>
+              </div>
+              <div className="col-lg-6 pop-view-block">
+                <label className="view-lable">Supplier Name</label>
+                <span className="view-value">{ this.state.suppliername }</span>
+              </div>
+              <div className="col-lg-6 pop-view-block">
+                <label className="view-lable">Customer Name:</label>
+                <span className="view-value">{ this.state.customername }</span>
+              </div>
+              <div className="col-lg-6 pop-view-block">
+                <label className="view-lable">Document Amount:</label>
+                <span className="view-value">{ this.state.invoiceamt }</span>
+              </div>
+          </div>
+          
+              {/* <Form.Label>Document number: </Form.Label>
               <Form.Control type="text" id="invoiceno" name="invoiceno"  value={ this.state.invoiceno }
               placeholder="Input Document number"/>        
 
@@ -225,18 +243,18 @@ pauseOnHover
 
               <Form.Label>Document amount: </Form.Label>
               <Form.Control type="text" id="invoiceamt" name="invoiceamt"  value={ this.state.invoiceamt }
-              placeholder="Input Document amount"/>   
+              placeholder="Input Document amount"/>    */}
               
-              <Form.Label>Is Financed: </Form.Label>&nbsp;&nbsp;
-              <Form.Check inline label="Yes" id="yes" name="group1" type="checkbox" checked={this.state.isfinanced==="Y"} onChange={this.onIsFinanceYesChecked.bind(this)} ></Form.Check>
-              <Form.Check inline label="No" id = "no" name="group1" type="checkbox" checked={this.state.isfinanced==="N"} onChange={this.onIsFinanceNoChecked.bind(this)} ></Form.Check>
+              <Form.Label>Is Financed </Form.Label>
+              <Form.Check className="checkbox" label="Yes" id="yes" name="group1" type="checkbox" checked={this.state.isfinanced==="Y"} onChange={this.onIsFinanceYesChecked.bind(this)} ></Form.Check>
+              <Form.Check className="checkbox" label="No" id = "no" name="group1" type="checkbox" checked={this.state.isfinanced==="N"} onChange={this.onIsFinanceNoChecked.bind(this)} ></Form.Check>
           </Form.Group>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={this.handleClose.bind(this)}>
+          <Button variant="secondary" className="action-button btn-grey" onClick={this.handleClose.bind(this)}>
             Close
           </Button>
-          <Button variant="primary" onClick={this.handleUpdateDoc.bind(this)}>
+          <Button variant="primary" className="action-button" onClick={this.handleUpdateDoc.bind(this)}>
             Update Changes
           </Button>
         </Modal.Footer>
