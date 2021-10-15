@@ -17,19 +17,15 @@ The project comprises of:
   - [Table of Contents](#table-of-contents)
   - [Quick Start](#quick-start)
     - [Install npm dependencies](#install-npm-dependencies)
-    - [Build the on-chain program](#build-the-on-chain-program)
-    - [Deploy the on-chain program](#deploy-the-on-chain-program)
-    - [Run the JavaScript client](#run-the-javascript-client)
-    - [Expected output](#expected-output)
-    - [Customizing the Program](#customizing-the-program)
-  - [Learn about Solana](#learn-about-solana)
-  - [Learn about the client](#learn-about-the-client)
-    - [Entrypoint](#entrypoint)
-    - [Establish a connection to the cluster](#establish-a-connection-to-the-cluster)
-    - [Load the kycdocument on-chain program if not already loaded](#load-the-kycdocument-on-chain-program-if-not-already-loaded)
-    - [Send an Create Invocie transaction to the on-chain program](#send-a-create-invoice-to-the-on-chain-program)
-    - [Update the Solana account](#update-the-solana-account)
-  
+    - [Build the project](#build-the-project)
+    - [Launch project](#launch-project)
+    - [Login to Fraud Reveal UI as Supplier](#login-to-fraud-reveal-ui-as-supplier)
+    - [View aleady created invoices by Supplier](#view-already-created-invoices-by-supplier)
+    - [Add a new invoice](#add-a-new-invoice)
+    - [Login to Fraud Reveal UI as Bank user](#login-to-fraud-reveal-ui-as-bank-user)
+    - 
+
+
 ## Quick Start
 
 [![Open in
@@ -62,43 +58,58 @@ npm run build
 ```bash
 npm run start
 ```
-### Login the Fraud Reveal UI as Supplier
+
+### Solana account and smart contract
+
+A Solana account and program is already created and we will be using the existing account and program id
+
+program id - 3FAUN1Q69vTXXU4z8qJKkaX8TFZUfo3ck6HuRsvFqsCA
+
+This program is already deployed to https://api.devnet.solana.com
+
+### Login to Fraud Reveal UI as Supplier
 
 After successful launch, open chrome browser and open http://localhost:3000
 
 To login as suppplier, login with username as Sony/Toshiba and password test.
 
-### View aleady created invoices as Supplier
+### View aleady created invoices by Supplier
 
-Once supplier logged in, a supplier can view all the already uploaded invoices.
+* Once supplier logged in, a supplier can view all the already created that were saved to Solana block chain for Invoice Fraud Reveal account.
+* Basesd on the logged in supplier, invoices are filtered from the Solana block chain.
+*  
+### Add a new invoice
 
-### Query the Solana account
+* Supplier will only be able to create/add a new invoice. A Add button is enabled for the logged in supplier.
+* User can click on Add button, which will open a popup screen to add a new invoice.
+* User can fill the required fileds so that a new invoice will be added to Solana block chain for Invoice Fraud Reveal account.
+* A toast will appear on the screen after successful creation/addition of invoice.
 
-Each time the client says saves an invoice to an account, the program add a new invoice data entry to the account's data.  The client queries the
-account data to filter the existing records by invoiceno and suppliername
-[`queryData`](https://github.com/kotirao27/solana_hackathon/fraud-reveal/src/client/invoicekyc_client.ts#L230).
+### Login to Fraud Reveal UI as Bank user
 
-### Update the Solana account
+After successful launch, open chrome browser and open http://localhost:3000
 
-Each time the client says saves an invoice to an account, the program add a new invoice data entry to the account's data.  The client can update th isfinanced flag for a particular record based on invoiceno and supplier.
-[`updateData`](https://github.com/kotirao27/solana_hackathon/fraud-reveal/src/client/invoicekyc_client.ts#L237).
+To login as FI/Bank user, login with username as fiuser or bankuser and password test.
 
+### Query the invoices submitted by buyer to bank.
 
-## Pointing to a public Solana cluster
+* Once a supplier raised an invoice against a buyer, buyer might approach a bank asking for finance.
+* Bank users can validate the invoice submitted by the buyer using the Fraud Reveal portal.
+* To validate the invoice and check if its already financed or not, user can input the document/invoice number, supplier name and search for the validity of the document.
 
-Solana maintains three public clusters:
-- `devnet` - Development cluster with airdrops enabled
-- `testnet` - Tour De Sol test cluster without airdrops enabled
-- `mainnet-beta` -  Main cluster
+### Update invoice finance status
 
-Use the Solana CLI to configure which cluster to connect to.
+* User also has option to update the finance status for the queried invoice.
+* On the UI screen for a non financed document, update button is provided.
+* User can click on the update button, reset the is financed status and save.
+* Upon successful update, a toast message appears saying Update successful.
 
-To point to `devnet`:
-```bash
-solana config set --url devnet
-```
+### Wire frames link
+ https://invis.io/YSQ9LOMZW8V
 
-To point back to the local cluster:
-```bash
-solana config set --url localhost
-```
+### Solana program logs verification
+
+* Any error while executing the program will be logged to the browser console.
+* General Solana program transaction history can be viewed in https://explorer.solana.com/?cluster=devnet
+* Search with program id (3FAUN1Q69vTXXU4z8qJKkaX8TFZUfo3ck6HuRsvFqsCA)
+* Navigate to Transaction history and verify the latest.
