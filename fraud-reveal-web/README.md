@@ -63,9 +63,10 @@ npm run start
 
 ### Solana account and smart contract
 
-A Solana account and program is already created and we will be using the existing account and program id
+A Common Solana account and program is already created and we will be using the existing account and program id
 
-program id - 3FAUN1Q69vTXXU4z8qJKkaX8TFZUfo3ck6HuRsvFqsCA
+program id - 6nPb1MJzYMwaeaPwrXHVk13j146ZqEKLinzEvZsh8pxA
+account - 8m4FboEnySgyXePbDv3KpntdznhiYqRAhZ74HZzeHT9i
 
 This program is already deployed to https://api.devnet.solana.com
 
@@ -79,7 +80,8 @@ To login as suppplier, login with username as Sony/Toshiba and password test.
 
 * Once supplier logged in, a supplier can view all the already created that were saved to Solana block chain for Invoice Fraud Reveal account.
 * Basesd on the logged in supplier, invoices are filtered from the Solana block chain.
-*  
+* If there are no invoices available, User can add a new invoice.
+
 ### Add a new invoice
 
 * Supplier will only be able to create/add a new invoice. A Add button is enabled for the logged in supplier.
