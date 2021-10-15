@@ -24,7 +24,7 @@ export interface WalletAdapter extends EventEmitter {
 }
 
 
-let programId = new PublicKey("F8NCzmjNDAfNTEsL4SF69qKfYPNcX7AgH4iVRfaQLquL");
+let programId = new PublicKey("6nPb1MJzYMwaeaPwrXHVk13j146ZqEKLinzEvZsh8pxA");
 
 let connection: Connection;
 
