@@ -3,16 +3,11 @@ Ready-to-Code](https://img.shields.io/badge/Gitpod-Ready--to--Code-blue?logo=git
 
 # Invoice Fraud Reveal on Solana
 
-This project demonstrates how to use the [Solana Javascript
-API](https://github.com/solana-labs/solana-web3.js) to
-interact with programs on the Solana blockchain.
-
 The project comprises of:
 
 * An on-chain Invoice Fraud Reveal program useful for Trade Finance
 * A client that can send a Create invoice request to an account.
-* A client that can query the Invoice data for an account.
-* A client that can update the Invoice Financed Status based on Invoice number and Supplier name
+* A client that can update the Invoice Financed Status based on Invoice number and Supplier name.
 
 ## Table of Contents
 - [Invoice Fraud Reveal on Solana](#invoce-fraud-reveal-on-solana)
@@ -132,21 +127,17 @@ Program H4ntmW2rW7RhLrmbNavdFd45nvVfvEV9VQt4ziRxj3kt consumed 37618 of 200000 co
 Program H4ntmW2rW7RhLrmbNavdFd45nvVfvEV9VQt4ziRxj3kt success
 ```
 
-#### Not seeing the expected output?
-
-- Ensure you've [started the local cluster](#start-local-solana-cluster),
-  [built the on-chain program](#build-the-on-chain-program) and [deployed the program to the cluster](#deploy-the-on-chain-program).
-- Inspect the program logs by running `solana logs` to see why the program failed.
-  - ```bash
-    Transaction executed in slot 5621:
-    Signature: 4pya5iyvNfAZj9sVWHzByrxdKB84uA5sCxLceBwr9UyuETX2QwnKg56MgBKWSM4breVRzHmpb1EZQXFPPmJnEtsJ
-    Status: Error processing Instruction 0: Program failed to complete
-    Log Messages:
-      Program H4ntmW2rW7RhLrmbNavdFd45nvVfvEV9VQt4ziRxj3kt invoke [1]
-      Program log: Rust program entrypoint
-      Program H4ntmW2rW7RhLrmbNavdFd45nvVfvEV9VQt4ziRxj3kt consumed 200000 of 200000 compute units
-      Program failed to complete: exceeded maximum number of instructions allowed (200000) at instruction #334
-      Program H4ntmW2rW7RhLrmbNavdFd45nvVfvEV9VQt4ziRxj3kt failed: Program failed to complete
+```bash
+Program F8NCzmjNDAfNTEsL4SF69qKfYPNcX7AgH4iVRfaQLquL invoke [1]
+Invoice Data storage called !!
+Received request is {"invoiceno":"Inv002","suppliername":"Sony","customername":"DEF Cusomer","invoiceamt":100,"instruction":"CREATE","invoicedate":"14-OCT-2021","isfinanced":"N"}
+Creation started
+Received account data InvoiceDataList { data: [InvoiceData { instruction: "CREATE", invoiceno: "Inv001", suppliername: "Sony", customername: "ABC Customer ltd", invoicedate: "14-OCT-2021", invoiceamt: 10000, isfinanced: "N" }] }
+Updated data InvoiceDataList { data: [InvoiceData { instruction: "CREATE", invoiceno: "Inv001", suppliername: "Sony", customername: "ABC Customer ltd", invoicedate: "14-OCT-2021", invoiceamt: 10000, isfinanced: "N" }, InvoiceData { instruction: "CREATE", invoiceno: "Inv002", suppliername: "Sony", customername: "DEF Cusomer", invoicedate: "14-OCT-2021", invoiceamt: 100, isfinanced: "N" }] }
+End create.
+Program F8NCzmjNDAfNTEsL4SF69qKfYPNcX7AgH4iVRfaQLquL consumed 75194 of 200000 compute units
+Program F8NCzmjNDAfNTEsL4SF69qKfYPNcX7AgH4iVRfaQLquL success
+```
 
 ### Customizing the Program
 
@@ -155,20 +146,6 @@ any files under `/src/program-rust` you will need to
 [rebuild the on-chain program](#build-the-on-chain-program) and [redeploy the program](#deploy-the-on-chain-program).
 
 Now when you rerun `npm run start`, you should see the results of your changes.
-
-## Learn about Solana
-
-More information about how Solana works is available in the [Solana
-documentation](https://docs.solana.com/) and all the source code is available on
-[github](https://github.com/solana-labs/solana)
-
-Further questions? Visit us on [Discord](https://discordapp.com/invite/pquxPsq)
-
-## Learn about the client
-
-The client in this example is written in TypeScript using:
-- [Solana web3.js SDK](https://github.com/solana-labs/solana-web3.js)
-- [Solana web3 API](https://solana-labs.github.io/solana-web3.js)
 
 ### Entrypoint
 
@@ -215,25 +192,6 @@ account data to filter the existing records by invoiceno and suppliername
 Each time the client says saves an invoice to an account, the program add a new invoice data entry to the account's data.  The client can update th isfinanced flag for a particular record based on invoiceno and supplier.
 [`updateData`](https://github.com/kotirao27/solana_hackathon/fraud-reveal/src/client/invoicekyc_client.ts#L237).
 
-
-## Learn about the on-chain program
-
-The [on-chain kycdocument program](/src/program-rust/Cargo.toml) is a Rust program
-compiled to [Berkley Packet Format
-(BPF)](https://en.wikipedia.org/wiki/Berkeley_Packet_Filter) and stored as an
-[Executable and Linkable Format (ELF) shared
-object](https://en.wikipedia.org/wiki/Executable_and_Linkable_Format).
-
-The program is written using:
-- [Solana Rust SDK](https://github.com/solana-labs/solana/tree/master/sdk)
-
-### Programming on Solana
-
-To learn more about Solana programming model refer to the [Programming Model
-Overview](https://docs.solana.com/developing/programming-model/overview).
-
-To learn more about developing programs on Solana refer to the [On-Chain 
-Programs Overview](https://docs.solana.com/developing/on-chain-programs/overview)
 
 ## Pointing to a public Solana cluster
 
