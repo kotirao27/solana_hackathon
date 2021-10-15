@@ -116,18 +116,6 @@ npm run start
 Public key values will differ:
 
 ```bash
-Program H4ntmW2rW7RhLrmbNavdFd45nvVfvEV9VQt4ziRxj3kt invoke [1]
-Invoice Data storage called !!
-Received request is {"invoiceno":"inv001","suppliername":"supp1","customername":"cust1","invoiceamt":10,"instruction":"CREATE","invoicedate":"10-OCT-2021","isfinanced":"N"}
-Creation started
-Received account data []
-Updated data [InvoiceData { instruction: "CREATE", invoiceno: "inv001", suppliername: "supp1", customername: "cust1", invoicedate: "10-OCT-2021", invoiceamt: 10, isfinanced: "N" }]
-End create.
-Program H4ntmW2rW7RhLrmbNavdFd45nvVfvEV9VQt4ziRxj3kt consumed 37618 of 200000 compute units
-Program H4ntmW2rW7RhLrmbNavdFd45nvVfvEV9VQt4ziRxj3kt success
-```
-
-```bash
 Program F8NCzmjNDAfNTEsL4SF69qKfYPNcX7AgH4iVRfaQLquL invoke [1]
 Invoice Data storage called !!
 Received request is {"invoiceno":"Inv002","suppliername":"Sony","customername":"DEF Cusomer","invoiceamt":100,"instruction":"CREATE","invoicedate":"14-OCT-2021","isfinanced":"N"}
@@ -135,6 +123,19 @@ Creation started
 Received account data InvoiceDataList { data: [InvoiceData { instruction: "CREATE", invoiceno: "Inv001", suppliername: "Sony", customername: "ABC Customer ltd", invoicedate: "14-OCT-2021", invoiceamt: 10000, isfinanced: "N" }] }
 Updated data InvoiceDataList { data: [InvoiceData { instruction: "CREATE", invoiceno: "Inv001", suppliername: "Sony", customername: "ABC Customer ltd", invoicedate: "14-OCT-2021", invoiceamt: 10000, isfinanced: "N" }, InvoiceData { instruction: "CREATE", invoiceno: "Inv002", suppliername: "Sony", customername: "DEF Cusomer", invoicedate: "14-OCT-2021", invoiceamt: 100, isfinanced: "N" }] }
 End create.
+Program F8NCzmjNDAfNTEsL4SF69qKfYPNcX7AgH4iVRfaQLquL consumed 75194 of 200000 compute units
+Program F8NCzmjNDAfNTEsL4SF69qKfYPNcX7AgH4iVRfaQLquL success```
+
+```bash
+Program F8NCzmjNDAfNTEsL4SF69qKfYPNcX7AgH4iVRfaQLquL invoke [1]
+Invoice Data storage called !!
+Received request is {"invoiceno":"Inv002","suppliername":"Sony","customername":"DEF Cusomer","invoiceamt":100,"instruction":"CREATE","invoicedate":"14-OCT-2021","isfinanced":"Y"}
+Update is financed started
+Existing  data InvoiceDataList { data: [InvoiceData { instruction: "CREATE", invoiceno: "Inv001", suppliername: "Sony", customername: "ABC Customer ltd", invoicedate: "14-OCT-2021", invoiceamt: 10000, isfinanced: "N" }] }
+Request data {"invoiceno":"Inv002","suppliername":"Sony","customername":"DEF Cusomer","invoiceamt":100,"instruction":"CREATE","invoicedate":"14-OCT-2021","isfinanced":"Y"}
+Found index 1
+Updated data InvoiceDataList { data: [InvoiceData { instruction: "CREATE", invoiceno: "Inv001", suppliername: "Sony", customername: "ABC Customer ltd", invoicedate: "14-OCT-2021", invoiceamt: 10000, isfinanced: "N" }, InvoiceData { instruction: "CREATE", invoiceno: "Inv002", suppliername: "Sony", customername: "DEF Cusomer", invoicedate: "14-OCT-2021", invoiceamt: 100, isfinanced: "Y }] }
+End update.
 Program F8NCzmjNDAfNTEsL4SF69qKfYPNcX7AgH4iVRfaQLquL consumed 75194 of 200000 compute units
 Program F8NCzmjNDAfNTEsL4SF69qKfYPNcX7AgH4iVRfaQLquL success
 ```
