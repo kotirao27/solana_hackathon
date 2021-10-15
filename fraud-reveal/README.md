@@ -20,7 +20,6 @@ The project comprises of:
     - [Deploy the on-chain program](#deploy-the-on-chain-program)
     - [Run the JavaScript client](#run-the-javascript-client)
     - [Expected output](#expected-output)
-      - [Not seeing the expected output?](#not-seeing-the-expected-output)
     - [Customizing the Program](#customizing-the-program)
   - [Learn about Solana](#learn-about-solana)
   - [Learn about the client](#learn-about-the-client)
@@ -28,7 +27,6 @@ The project comprises of:
     - [Establish a connection to the cluster](#establish-a-connection-to-the-cluster)
     - [Load the kycdocument on-chain program if not already loaded](#load-the-kycdocument-on-chain-program-if-not-already-loaded)
     - [Send an Create Invocie transaction to the on-chain program](#send-a-create-invoice-to-the-on-chain-program)
-    - [Query the Solana account](#query-the-solana-account)
     - [Update the Solana account](#update-the-solana-account)
   
 ## Quick Start
