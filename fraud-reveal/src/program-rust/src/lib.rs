@@ -115,9 +115,15 @@ pub fn update_data(
     existing_data: &mut InvoiceDataList,
 ) {
 
-    if inv_object.invoiceno =="" || inv_object.suppliername=="" {
+    //if inv_object.invoiceno =="" || inv_object.suppliername=="" {
      //return existing_data;
-    } else {
+    //} else {
+
+  
+    msg!("Existing  data {:?}", &existing_data.data);
+        
+    msg!("Request data {:?}", &inv_object);
+
 
      let position = existing_data.data
     .iter()
@@ -126,7 +132,7 @@ pub fn update_data(
 
     msg!("Found index {}", position);
     existing_data.data[position].isfinanced = inv_object.isfinanced;
-    }
+    //}
 
     //existing_data[position].isfinanced = inv_object.isfinanced;
 
