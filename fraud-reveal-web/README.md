@@ -23,8 +23,10 @@ The project comprises of:
     - [View aleady created invoices by Supplier](#view-already-created-invoices-by-supplier)
     - [Add a new invoice](#add-a-new-invoice)
     - [Login to Fraud Reveal UI as Bank user](#login-to-fraud-reveal-ui-as-bank-user)
-    - 
-
+    - [Query the invoices submitted by buyer to bank](#query-the-invoices-submitted-by-buyer-to-bank)
+    - [Update invoice finance status](#update-invoice-finance-status)
+    - [Wire frames link](#wire-frames-link)
+    - [Solana program logs verification](#Solana-program-logs-verification)
 
 ## Quick Start
 
