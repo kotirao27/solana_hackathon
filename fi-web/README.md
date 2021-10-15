@@ -59,11 +59,10 @@ npm run start
 
 ### Solana account and smart contract
 
-A Solana account and program is already created and we will be using the existing account and program id
+A Common Solana account and program is already created and we will be using the existing account and program id
 
-program id - 3FAUN1Q69vTXXU4z8qJKkaX8TFZUfo3ck6HuRsvFqsCA
-
-This program is already deployed to https://api.devnet.solana.com
+program id - 6nPb1MJzYMwaeaPwrXHVk13j146ZqEKLinzEvZsh8pxA
+account - 8m4FboEnySgyXePbDv3KpntdznhiYqRAhZ74HZzeHT9i
 
 ### Login to Fraud Reveal UI as Supplier
 
